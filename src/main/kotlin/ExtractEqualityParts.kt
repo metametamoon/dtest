@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
 
-fun extractEqualityParts(equality: String): Result<Pair<String, String>, String> {
+
+fun extractEqualityParts(equality: String): Result<EqualityParts, String> {
     val project = createNewProject()
     // TODO: fix this workaround (the parser doesn't like it if there is only one expression
     //  in file, so the dummy property declaration is added).
@@ -53,14 +54,19 @@ private fun extractBinaryExpression(property: KtProperty): Result<KtBinaryExpres
     return Ok(binaryExpression)
 }
 
+data class EqualityParts(
+    val actualExpression: String,
+    val expectedExpression: String
+)
+
 private fun extractEqualityPartsFromKtProperty(property: KtProperty) =
-    binding<Pair<String, String>, String> {
+    binding<EqualityParts, String> {
         val equalityExpression = extractBinaryExpression(property).bind()
         val left = equalityExpression.left?.text
             ?: Err("Left part opf expression is void").bind<Nothing>()
         val right = equalityExpression.right?.text
             ?: Err("Left part opf expression is void").bind<Nothing>()
-        left to right
+        EqualityParts(left, right)
     }
 
 fun createKtFile(codeString: String, fileName: String, project: Project) =
