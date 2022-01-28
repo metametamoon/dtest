@@ -1,6 +1,8 @@
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import extractor.EqualityParts
+import extractor.extractEqualityParts
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -9,14 +11,26 @@ class ExtractEqualityTest {
 
     @Test
     fun testEquality() {
-        Assertions.assertEquals(Ok("sum(30, 50)" to "80"), extractEqualityParts("sum(30, 50)== 80"))
-        Assertions.assertEquals(Ok("sum(30, 50)" to "80"), extractEqualityParts("sum(30, 50) == 80"))
-        Assertions.assertEquals(Ok("sum(30, 50)" to "80"), extractEqualityParts("sum(30, 50) ==80"))
+        Assertions.assertEquals(
+            Ok(EqualityParts("sum(30, 50)", "80")),
+            extractEqualityParts("sum(30, 50)== 80")
+        )
+        Assertions.assertEquals(
+            Ok(EqualityParts("sum(30, 50)", "80")),
+            extractEqualityParts("sum(30, 50) == 80")
+        )
+        Assertions.assertEquals(
+            Ok(EqualityParts("sum(30, 50)", "80")),
+            extractEqualityParts("sum(30, 50) ==80")
+        )
     }
 
     @Test
     fun testWeirdEquality() {
-        Assertions.assertEquals(Ok("sum(30, 50 == 50)" to "80"), extractEqualityParts("sum(30, 50 == 50)== 80"))
+        Assertions.assertEquals(
+            Ok(EqualityParts("sum(30, 50 == 50)", "80")),
+            extractEqualityParts("sum(30, 50 == 50)== 80")
+        )
     }
 
     @Test
