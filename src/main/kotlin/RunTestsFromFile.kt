@@ -1,5 +1,4 @@
 import com.github.michaelbull.result.Result
-import org.jetbrains.kotlin.com.intellij.openapi.editor.Document
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.junit.Assert

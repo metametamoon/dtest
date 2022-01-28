@@ -2,14 +2,14 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiManager
+import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -24,7 +24,7 @@ fun extractEqualityParts(equality: String): Result<EqualityParts, String> {
     val ktFile = createKtFile("val i = $equality", "sum.kt", project)
     ktFile.children.forEach {
         if (it is KtProperty) {
-            return extractEqualityPartsFromKtProperty(it)
+            return@extractEqualityParts extractEqualityPartsFromKtProperty(it)
         }
     }
     return Err("Failed")
@@ -37,13 +37,11 @@ fun createNewProject(): Project {
         MessageCollector.NONE
     )
 
-    val project =
-        KotlinCoreEnvironment.createForProduction(
-            Disposer.newDisposable(),
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).project
-    return project
+    return KotlinCoreEnvironment.createForProduction(
+        Disposer.newDisposable(),
+        configuration,
+        EnvironmentConfigFiles.JVM_CONFIG_FILES
+    ).project
 }
 
 private fun extractBinaryExpression(property: KtProperty): Result<KtBinaryExpression, String> {
@@ -59,6 +57,7 @@ data class EqualityParts(
     val expectedExpression: String
 )
 
+@Suppress("RemoveExplicitTypeArguments")
 private fun extractEqualityPartsFromKtProperty(property: KtProperty) =
     binding<EqualityParts, String> {
         val equalityExpression = extractBinaryExpression(property).bind()
