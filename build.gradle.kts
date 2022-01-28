@@ -3,21 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.10-RC"
-    id("idea")
 }
 
-idea {
-    module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
-    }
-}
 group = "me.james"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
+repositories(RepositoryHandler::mavenCentral)
 
 dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
@@ -38,8 +29,9 @@ dependencies {
 
 tasks.test {
     useJUnit()
+    useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }

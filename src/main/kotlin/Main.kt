@@ -1,3 +1,7 @@
+import extractor.createKtFile
+import extractor.createNewProject
+import extractor.extractEqualityParts
+import extractor.extractFunctionsAndDocs
 import java.io.File
 
 fun main() {

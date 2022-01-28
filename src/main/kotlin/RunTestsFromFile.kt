@@ -1,37 +1,31 @@
 import com.github.michaelbull.result.Result
+import extractor.*
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import java.io.File
-import javax.script.ScriptEngineManager
+import javax.script.ScriptEngine
 
 fun runTestsFromFile(path: String) {
+    setIdeaIoUseFallback()
     val project = createNewProject()
     val file = File(path)
     val text = file.readText().replace("\r\n", "\n")
     val ktFile = createKtFile(text, file.absolutePath, project)
-    val document = ktFile.containingFile.viewProvider.document!!
-
-    val docs = extractFunctionsAndDocs(ktFile).map { it.first }
-    val assertions = docs.flatMap(::extractAssertions)
-    val engine = ScriptEngineManager().getEngineByExtension("kts")!!
-    assertions.forEachIndexed { index, (equalityParts, offset) ->
-        val (actual, expected) = equalityParts
-        val lineNumber = document.getLineNumber(offset) + 1
-        Assert.assertEquals(
-            "Error in test suite (${file.absolutePath}:$lineNumber)\n",
-            engine.eval(expected),
-            engine.eval(actual)
-        )
-        val testNumber = index + 1
-        println("$testNumber - successful")
-    }
+    val tests = extractTests(ktFile)
+    tests.forEach { test -> test.execute() }
 }
 
 data class Assertion(
     val equalityParts: EqualityParts,
-    val testSuiteOffset: Int
-)
+) {
+    fun execute(engine: ScriptEngine) {
+        Assertions.assertEquals(
+            engine.eval(equalityParts.expectedExpression),
+            engine.eval(equalityParts.actualExpression)
+        )
+    }
+}
 
 fun extractAssertions(kDoc: KDoc): List<Assertion> {
     val documentationText = kDoc.text?.split("\n") ?: return listOf()
@@ -43,5 +37,5 @@ fun extractAssertions(kDoc: KDoc): List<Assertion> {
     }
     return assertions.map(::extractEqualityParts)
         .mapNotNull(Result<EqualityParts, String>::component1)
-        .map { equalityParts -> Assertion(equalityParts, kDoc.startOffset) }
+        .map(::Assertion)
 }

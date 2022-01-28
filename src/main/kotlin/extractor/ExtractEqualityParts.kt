@@ -1,3 +1,5 @@
+package extractor
+
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result

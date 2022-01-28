@@ -1,5 +1,4 @@
-import org.junit.Test
-import runTestsFromFile
+import org.junit.jupiter.api.Test
 
 class EvalTest {
     @Test
