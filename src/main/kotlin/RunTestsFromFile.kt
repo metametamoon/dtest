@@ -17,17 +17,22 @@ fun runTestsFromFile(path: String) {
 }
 
 data class Assertion(
+    val sourceLocation: SourceLocation,
     val equalityParts: EqualityParts,
 ) {
     fun execute(engine: ScriptEngine) {
         Assertions.assertEquals(
             engine.eval(equalityParts.expectedExpression),
-            engine.eval(equalityParts.actualExpression)
+            engine.eval(equalityParts.actualExpression),
+            "$sourceLocation"
         )
     }
 }
 
-fun extractAssertions(kDoc: KDoc): List<Assertion> {
+fun extractAssertions(
+    kDoc: KDoc,
+    sourceLocation: SourceLocation
+): List<Assertion> {
     val documentationText = kDoc.text?.split("\n") ?: return listOf()
     val assertions = documentationText.mapNotNull { row ->
         val regex = """>>>(.*)""".toRegex()
@@ -37,5 +42,5 @@ fun extractAssertions(kDoc: KDoc): List<Assertion> {
     }
     return assertions.map(::extractEqualityParts)
         .mapNotNull(Result<EqualityParts, String>::component1)
-        .map(::Assertion)
+        .map { equalityParts -> Assertion(sourceLocation, equalityParts) }
 }
