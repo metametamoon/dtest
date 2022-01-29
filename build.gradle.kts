@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    kotlin("jvm") version "1.6.10-RC"
+    kotlin("jvm") version "1.6.10"
 }
 
 group = "me.james"
@@ -15,7 +15,7 @@ repositories {
     }
     maven {
         url =
-            uri("https://jetbrains.bintray.com/intellij-third-party-dependencies.")
+            uri("https://cache-redirector.jetbrains.com/intellij-dependencies")
     }
 }
 
@@ -24,10 +24,12 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.6.0")
-    implementation("com.jetbrains.intellij.platform:core:213.6777.50")
 
-    implementation("com.jetbrains.intellij.platform:core-impl")
-    implementation("com.jetbrains.intellij.platform:util")
+//    implementation("com.jetbrains.intellij.platform:core:213.6777.50")
+//    runtimeOnly("com.jetbrains.intellij.platform:core-impl:213.6777.50")
+//    runtimeOnly("com.jetbrains.intellij.platform:lang-impl:213.6777.50")
+//    runtimeOnly("com.jetbrains.intellij.platform:lang:213.6777.50")
+//    implementation("com.jetbrains.intellij.platform:util:213.6777.50")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:kotlin-test-junit")

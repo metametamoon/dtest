@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,6 +33,7 @@ fun extractEqualityParts(equality: String): Result<EqualityParts, String> {
 }
 
 fun createNewProject(): Project {
+    setIdeaIoUseFallback()
     val configuration = CompilerConfiguration()
     configuration.put(
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
@@ -48,7 +50,7 @@ private fun extractBinaryExpression(property: KtProperty): Result<KtBinaryExpres
     val binaryExpression = property.lastChild as? KtBinaryExpression
         ?: return Err("Not a binary expression")
     val operator = binaryExpression.operationToken
-    if (operator == KtTokens.EQEQ) return Err("Not an equality")
+    if (operator != KtTokens.EQEQ) return Err("Not an equality")
     return Ok(binaryExpression)
 }
 
@@ -61,7 +63,7 @@ private fun extractEqualityPartsFromKtProperty(property: KtProperty) =
     binding<EqualityParts, String> {
         val equalityExpression = extractBinaryExpression(property).bind()
         val left = equalityExpression.left?.text
-            ?: Err("Left part opf expression is void").bind<Nothing>()
+            ?: Err("Left part of expression is void").bind<Nothing>()
         val right = equalityExpression.right?.text
             ?: Err("Left part opf expression is void").bind<Nothing>()
         EqualityParts(left, right)
