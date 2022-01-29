@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
@@ -21,8 +22,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 fun extractEqualityParts(equality: String): Result<EqualityParts, String> {
     val project = createNewProject()
-    // TODO: fix this workaround (the parser doesn't like it if there is only one expression
-    //  in file, so the dummy property declaration is added).
     val ktFile = createKtFile("val i = $equality", "sum.kt", project)
     ktFile.children.forEach {
         if (it is KtProperty) {
@@ -35,8 +34,7 @@ fun extractEqualityParts(equality: String): Result<EqualityParts, String> {
 fun createNewProject(): Project {
     val configuration = CompilerConfiguration()
     configuration.put(
-        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-        MessageCollector.NONE
+        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
     )
 
     return KotlinCoreEnvironment.createForProduction(
@@ -50,13 +48,12 @@ private fun extractBinaryExpression(property: KtProperty): Result<KtBinaryExpres
     val binaryExpression = property.lastChild as? KtBinaryExpression
         ?: return Err("Not a binary expression")
     val operator = binaryExpression.operationToken
-    if (operator.debugName != "EQEQ") return Err("Not an equality")
+    if (operator == KtTokens.EQEQ) return Err("Not an equality")
     return Ok(binaryExpression)
 }
 
 data class EqualityParts(
-    val actualExpression: String,
-    val expectedExpression: String
+    val actualExpression: String, val expectedExpression: String
 )
 
 @Suppress("RemoveExplicitTypeArguments")

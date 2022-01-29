@@ -15,7 +15,7 @@ repositories {
     }
     maven {
         url =
-            uri("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+            uri("https://jetbrains.bintray.com/intellij-third-party-dependencies.")
     }
 }
 

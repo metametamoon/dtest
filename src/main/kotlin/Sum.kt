@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 /**
  * This functions sums two integer numbers.
  *  >>> sum(5, 6) == 11
