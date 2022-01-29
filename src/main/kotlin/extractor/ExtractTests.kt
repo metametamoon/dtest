@@ -16,10 +16,13 @@ fun extractTests(ktFile: KtFile): List<Test> {
     val assertionSets = docs.map { (doc, function) ->
         val sourceLocation =
             extractSourceLocation(function, document, ktFile.name)
-        extractAssertions(doc, sourceLocation)
+        ktFile.packageFqName.child(function.nameAsSafeName) to extractAssertions(
+            doc,
+            sourceLocation
+        )
     }
-    return assertionSets.map { assertions ->
-        Test {
+    return assertionSets.map { (fqName, assertions) ->
+        Test(fqName) {
             assertions.forEach { assertion ->
                 assertion.execute(kotlinScriptEngine)
             }

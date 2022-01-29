@@ -3,17 +3,18 @@ import extractor.*
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DynamicTest
 import java.io.File
 import javax.script.ScriptEngine
 
-fun runTestsFromFile(path: String) {
+fun runTestsFromFile(path: String): List<DynamicTest> {
     setIdeaIoUseFallback()
     val project = createNewProject()
     val file = File(path)
     val text = file.readText().replace("\r\n", "\n")
     val ktFile = createKtFile(text, file.absolutePath, project)
     val tests = extractTests(ktFile)
-    tests.forEach { test -> test.execute() }
+    return tests.map(Test::toDynamicTest)
 }
 
 data class Assertion(

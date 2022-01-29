@@ -1,8 +1,6 @@
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 
 class EvalTest {
-    @Test
-    fun eval() {
-        runTestsFromFile("src/main/kotlin/Sum.kt")
-    }
+    @TestFactory
+    fun eval() = runTestsFromFile("src/main/kotlin/Sum.kt")
 }
