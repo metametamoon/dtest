@@ -2,23 +2,42 @@
 
 /**
  * This functions sums two integer numbers.
- *  >>> sum(5, 6) == 11
+ *  >>> assertEquals(11, sum(5, 6))
  */
 fun sum(a: Int, b: Int) = a + b
 
 /**
  * Meh, adds one two the sum
- *  >>> sum1(5, 6) == 12
- *  >>> sum1(0, 0) == 1
+ *  >>> assertEquals(12, sum1(5, 6))
+ *  >>> assertEquals(1, sum1(0, 0))
  */
 fun sum1(a: Int, b: Int) = a + b + 1
 
 class Const {
     companion object {
         /**
-         *  >>> Const.constant() == 42
+         *  >>> assertEquals(42, Const.constant())
          */
         fun constant() = 43
     }
+}
+
+/**
+ * >>> f()
+ */
+fun f() {
+    g()
+}
+
+fun g() {
+    h()
+}
+
+fun h() {
+    p()
+}
+
+fun p() {
+    throw Exception("P")
 }
 

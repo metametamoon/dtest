@@ -15,6 +15,7 @@ object DefaultTestSettings : TestSettings {
 
     override fun executeTestSnippet(testSnippet: String) {
         defaultKtsEngine.getBindings(ScriptContext.ENGINE_SCOPE).clear()
+        defaultKtsEngine.eval("import org.junit.jupiter.api.Assertions.assertEquals")
         defaultKtsEngine.eval(testSnippet)
     }
 }
