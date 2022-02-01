@@ -1,6 +1,5 @@
 package extractor
 
-import DocsExtract
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
@@ -31,7 +30,7 @@ val globalParserOnlyKotlinProject by lazy {
     ).project
 }
 
-fun extractDocs(path: String): DocsExtract {
+fun extractDocs(path: String): ExtractedDocs {
     val file = File(path)
     val text = file.readText().replace("\r\n", "\n")
     val currentFile =
@@ -45,7 +44,7 @@ fun extractDocs(path: String): DocsExtract {
             return super.visitDeclaration(dcl, data)
         }
     })
-    return DocsExtract(currentFile, documentations)
+    return ExtractedDocs(documentations)
 }
 
 private fun createKtFile(
@@ -53,3 +52,4 @@ private fun createKtFile(
 ) = PsiManager.getInstance(project).findFile(
     LightVirtualFile(fileName, KotlinFileType.INSTANCE, codeString)
 ) as KtFile
+

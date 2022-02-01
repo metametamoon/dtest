@@ -1,3 +1,4 @@
+import facade.extractDynamicTests
 import org.junit.jupiter.api.TestFactory
 
 class EvalTest {

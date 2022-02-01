@@ -1,11 +1,9 @@
 package docs_to_tests
 
-import TestSettings
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 
 data class CodeSnippet(
-    val snippet: String,
-    val settings: TestSettings
+    val snippet: String, val settings: TestSettings
 )
 
 interface CodeSnippetsExtractor {
@@ -30,5 +28,4 @@ object DefaultCodeSnippetsExtractor : CodeSnippetsExtractor {
         }
         return assertions
     }
-
 }
