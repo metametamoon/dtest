@@ -1,3 +1,4 @@
+import extractor.extractDocs
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
@@ -36,6 +37,3 @@ fun extractTestsConfiguration(extractedDocs: DocsExtract): List<TestConfiguratio
     TODO("Not yet implemented")
 }
 
-fun extractDocs(path: String): DocsExtract {
-    TODO("Not yet implemented")
-}
