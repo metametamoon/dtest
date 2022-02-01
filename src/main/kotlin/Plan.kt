@@ -1,5 +1,6 @@
 import docs_to_tests.extractTestsConfiguration
 import extractor.extractDocs
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,6 +28,7 @@ interface TestSettings {
 
 @Suppress("unused")
 fun extractDynamicTests(path: String): List<DynamicTest> {
+    setIdeaIoUseFallback()
     val extractedDocs: DocsExtract = extractDocs(path)
     val testConfigurations: List<TestConfiguration> =
         extractTestsConfiguration(extractedDocs)
