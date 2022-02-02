@@ -2,44 +2,45 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    kotlin("jvm") version "1.6.10-RC"
-    id("idea")
+    kotlin("jvm") version "1.6.10"
 }
 
-idea {
-    module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
-    }
-}
 group = "me.james"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://www.jetbrains.com/intellij-repository/releases")
+    }
+    maven {
+        url =
+            uri("https://cache-redirector.jetbrains.com/intellij-dependencies")
+    }
 }
 
 dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.6.0")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
-    api("org.jetbrains.kotlin:kotlin-script-runtime")
-    api("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.10")
-    api("org.jetbrains.kotlin:kotlin-script-util")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable")
-    testApi("org.jetbrains.kotlin:kotlin-test:kotlin-test-junit")
-    testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect")
-    testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.6.0")
-    testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.6.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:kotlin-test-junit")
     implementation("junit:junit:4.13.2")
+
+    implementation("org.jetbrains.kotlin:kotlin-script-runtime")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-script-util")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-compiler:1.6.10")
+
 }
 
 tasks.test {
     useJUnit()
+    useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
