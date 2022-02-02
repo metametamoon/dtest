@@ -18,11 +18,9 @@ fun extractTestsConfiguration(
     }
 }
 
-private fun extractName(element: KtElement): String {
-    val name = when (element) {
-        is KtFunction -> element.fqName?.asString() ?: "unnamed"
-        is KtProperty -> element.fqName?.asString() ?: "unnamed"
-        else -> element.name ?: "unnamed"
-    }
-    return name
-}
+private fun extractName(element: KtElement): String =
+    when (element) {
+        is KtFunction -> element.fqName?.asString()
+        is KtProperty -> element.fqName?.asString()
+        else -> element.name
+    } ?: "unnamed"

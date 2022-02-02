@@ -1,3 +1,4 @@
+import com.github.michaelbull.result.unwrap
 import facade.extractDynamicTests
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
@@ -9,7 +10,8 @@ private fun List<DynamicTest>.matchRegex(regex: Regex): List<DynamicTest> =
 private fun List<DynamicTest>.executeAll() = forEach { it.executable.execute() }
 
 class EvalTest {
-    private val dynamicTests = extractDynamicTests("src/test/kotlin/Sum.kt")
+    private val dynamicTests =
+        extractDynamicTests("src/test/kotlin/Sum.kt").unwrap()
 
     @Test
     fun `must not fail`() {
@@ -26,5 +28,4 @@ class EvalTest {
             }
         }
     }
-
 }

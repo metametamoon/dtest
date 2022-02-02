@@ -2,9 +2,9 @@
 
 /**
  * This functions sums two integer numbers.
- *  >>> assertEquals(11, sum(5, 6))
+ *  >>> assertEquals(11, sumOfTwoIntegers(5, 6))
  */
-fun sum(a: Int, b: Int) = a + b
+fun sumOfTwoIntegers(a: Int, b: Int) = a + b
 
 /**
  * Meh, adds one two the sum

@@ -1,5 +1,8 @@
 package extractor
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
@@ -16,8 +19,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitor
 import java.io.File
+import java.io.IOException
 
-val globalParserOnlyKotlinProject by lazy {
+internal val globalKotlinParserOnlyProject by lazy {
     val configuration = CompilerConfiguration()
     configuration.put(
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
@@ -30,11 +34,15 @@ val globalParserOnlyKotlinProject by lazy {
     ).project
 }
 
-fun extractDocs(path: String): ExtractedDocs {
+fun extractDocs(path: String): Result<ExtractedDocs, Exception> {
     val file = File(path)
-    val text = file.readText().replace("\r\n", "\n")
+    val text = try {
+        file.readText().replace("\r\n", "\n")
+    } catch (e: IOException) {
+        return Err(e)
+    }
     val currentFile =
-        createKtFile(text, file.absolutePath, globalParserOnlyKotlinProject)
+        createKtFile(text, file.absolutePath, globalKotlinParserOnlyProject)
     val documentations = mutableListOf<Pair<KtElement, KDoc>>()
     currentFile.accept(object : KtTreeVisitor<Unit>() {
         override fun visitDeclaration(dcl: KtDeclaration, data: Unit?): Void? {
@@ -44,7 +52,7 @@ fun extractDocs(path: String): ExtractedDocs {
             return super.visitDeclaration(dcl, data)
         }
     })
-    return ExtractedDocs(documentations)
+    return Ok(ExtractedDocs(documentations))
 }
 
 private fun createKtFile(

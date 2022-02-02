@@ -25,12 +25,6 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.6.0")
 
-//    implementation("com.jetbrains.intellij.platform:core:213.6777.50")
-//    runtimeOnly("com.jetbrains.intellij.platform:core-impl:213.6777.50")
-//    runtimeOnly("com.jetbrains.intellij.platform:lang-impl:213.6777.50")
-//    runtimeOnly("com.jetbrains.intellij.platform:lang:213.6777.50")
-//    implementation("com.jetbrains.intellij.platform:util:213.6777.50")
-
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:kotlin-test-junit")
     implementation("junit:junit:4.13.2")
