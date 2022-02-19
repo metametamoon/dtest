@@ -1,5 +1,8 @@
 package docs_to_tests
 
+import docs_to_tests.snippets.CodeSnippetsExtractor
+import docs_to_tests.snippets.HaskelLikeLinesExtractor
+import docs_to_tests.snippets.asText
 import extractor.ExtractedDocs
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
@@ -11,7 +14,8 @@ fun extractTestsConfiguration(
 ): List<TestConfiguration> {
     return extractedDocs.documentations.flatMap { (element, kDoc) ->
         val name = extractName(element)
-        val testSnippets = codeSnippetsExtractor.extractCodeSnippets(kDoc)
+        val docText = kDoc.asText()
+        val testSnippets = codeSnippetsExtractor.extractCodeSnippets(docText)
         val settings = DefaultTestSettings
         testSnippets.map { (snippet) ->
             TestConfiguration(name, snippet, settings)
