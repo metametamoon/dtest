@@ -3,18 +3,16 @@ package docs_to_tests
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 
 data class CodeSnippet(
-    val snippet: String, val settings: TestSettings
+    val snippet: String
 )
 
 interface CodeSnippetsExtractor {
     fun extractCodeSnippets(kDoc: KDoc): List<CodeSnippet>
 }
 
-object DefaultCodeSnippetsExtractor : CodeSnippetsExtractor {
+object HaskelLikeLinesExtractor : CodeSnippetsExtractor {
     override fun extractCodeSnippets(kDoc: KDoc): List<CodeSnippet> =
-        extractTestLines(kDoc).map { snippet ->
-            CodeSnippet(snippet, DefaultTestSettings)
-        }
+        extractTestLines(kDoc).map(::CodeSnippet)
 
     /**
      * Returns the list of code lines; a code line is a part of a single

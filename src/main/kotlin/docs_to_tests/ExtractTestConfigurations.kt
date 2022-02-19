@@ -7,12 +7,13 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 fun extractTestsConfiguration(
     extractedDocs: ExtractedDocs,
-    codeSnippetsExtractor: CodeSnippetsExtractor = DefaultCodeSnippetsExtractor
+    codeSnippetsExtractor: CodeSnippetsExtractor = HaskelLikeLinesExtractor
 ): List<TestConfiguration> {
     return extractedDocs.documentations.flatMap { (element, kDoc) ->
         val name = extractName(element)
         val testSnippets = codeSnippetsExtractor.extractCodeSnippets(kDoc)
-        testSnippets.map { (snippet, settings) ->
+        val settings = DefaultTestSettings
+        testSnippets.map { (snippet) ->
             TestConfiguration(name, snippet, settings)
         }
     }

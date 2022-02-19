@@ -1,8 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-
 plugins {
     kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.intellij") version "1.4.0"
 }
 
 group = "me.james"
@@ -36,11 +34,11 @@ dependencies {
 
 }
 
+intellij {
+    version.set("2021.3.2")
+}
+
 tasks.test {
     useJUnit()
     useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
 }
