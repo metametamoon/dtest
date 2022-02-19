@@ -43,6 +43,10 @@ fun extractDocs(path: String): Result<ExtractedDocs, Exception> {
     }
     val currentFile =
         createKtFile(text, file.absolutePath, globalKotlinParserOnlyProject)
+    return extractDocs(currentFile)
+}
+
+fun extractDocs(currentFile: KtFile): Ok<ExtractedDocs> {
     val documentations = mutableListOf<Pair<KtElement, KDoc>>()
     currentFile.accept(object : KtTreeVisitor<Unit>() {
         override fun visitDeclaration(dcl: KtDeclaration, data: Unit?): Void? {
