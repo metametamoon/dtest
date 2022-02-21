@@ -43,27 +43,39 @@ private class TestGenerationTest {
         ) as KtFile
     }
 
-    @Test
-    fun `contains test code`() {
+
+    fun checkFileGeneration(
+        expectedCodeGenerationFileName: String,
+        testInfos: List<TestInfo>,
+        fqName: FqName,
+    ) {
         val properlyGeneratedCode = createKtFile(
-            File("testData/sum/TestSum.kt").readText().replace("\r\n", "\n"),
-            "TestSum",
+            File(expectedCodeGenerationFileName).readText()
+                .replace("\r\n", "\n"),
+            expectedCodeGenerationFileName.substringAfterLast("/"),
             globalKotlinParserOnlyProject
         )
-        val actualGeneratedCode = generateTestFile(
-            listOf(
-                TestInfo("f", listOf(CodeSnippet("f() shouldBe 42")))
-            ), FqName("")
-        ).joinToString("\n")
+        val actualGeneratedCode =
+            generateTestFile(testInfos, fqName).joinToString("\n")
 
         val actualFile = createKtFile(
             actualGeneratedCode,
-            "TestSum",
+            expectedCodeGenerationFileName.substringAfterLast("/"),
             globalKotlinParserOnlyProject
         )
         val expectedAst =
             DebugUtil.psiToString(properlyGeneratedCode, false, false)
         val actualAst = DebugUtil.psiToString(actualFile, false, false)
         Assertions.assertEquals(expectedAst, actualAst)
+    }
+
+    @Test
+    fun `contains test code`() {
+        checkFileGeneration(
+            "testData/sum/TestSum.kt",
+            listOf(
+                TestInfo("f", listOf(CodeSnippet("f() shouldBe 42")))
+            ), FqName("")
+        )
     }
 }
