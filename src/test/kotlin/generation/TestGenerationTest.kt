@@ -66,15 +66,29 @@ private class TestGenerationTest {
         val expectedAst =
             DebugUtil.psiToString(properlyGeneratedCode, false, false)
         val actualAst = DebugUtil.psiToString(actualFile, false, false)
-        Assertions.assertEquals(expectedAst, actualAst)
+        Assertions.assertEquals(expectedAst, actualAst) {
+            println("The code is:\n $actualGeneratedCode")
+            "Different asts"
+        }
     }
 
     @Test
-    fun `contains test code`() {
+    fun `one function with one test`() {
         checkFileGeneration(
             "testData/sum/TestSum.kt",
             listOf(
                 TestInfo("f", listOf(CodeSnippet("f() shouldBe 42")))
+            ), FqName("")
+        )
+    }
+
+    @Test
+    fun `two functions, one test each`() {
+        checkFileGeneration(
+            "testData/sum/FAndG.kt",
+            listOf(
+                TestInfo("f", listOf(CodeSnippet("f() shouldBe 42"))),
+                TestInfo("g", listOf(CodeSnippet("g() shouldBe -42")))
             ), FqName("")
         )
     }

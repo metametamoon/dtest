@@ -32,6 +32,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-script-util")
     implementation("org.jetbrains.kotlin:kotlin-scripting-compiler:1.6.10")
 
+    implementation("com.squareup:kotlinpoet:1.10.2")
 }
 
 intellij {
