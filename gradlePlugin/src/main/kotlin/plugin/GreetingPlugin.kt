@@ -7,7 +7,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 
 class GreetingPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.tasks.create("myTask") {
+        project.tasks.register("myTask") {
             println("Hello from here!")
             try {
                 val javaPlugin = project.extensions
