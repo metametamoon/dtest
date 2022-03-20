@@ -1,10 +1,12 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.intellij") version "1.4.0"
+    `java-gradle-plugin`
+    `maven-publish`
 }
 
 group = "me.james"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -26,11 +28,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:kotlin-test-junit")
     implementation("junit:junit:4.13.2")
-
-    implementation("org.jetbrains.kotlin:kotlin-script-runtime")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
-    implementation("org.jetbrains.kotlin:kotlin-script-util")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-compiler:1.6.10")
+
 
     implementation("com.squareup:kotlinpoet:1.10.2")
 }
@@ -42,4 +41,14 @@ intellij {
 tasks.test {
     useJUnit()
     useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        create("hello") {
+            id = "plugin"
+            implementationClass = "plugin.GreetingPlugin"
+            version = "1.0"
+        }
+    }
 }
