@@ -1,6 +1,5 @@
 package util
 
-import com.intellij.openapi.externalSystem.service.execution.NotSupportedException
 
 private const val kdocLineStarterLength = 3
 
@@ -10,8 +9,7 @@ private const val kdocLineStarterLength = 3
  * f
  */
 fun List<String>.trimDocs(): List<String> {
-    if (!isGoodKDoc())
-        throw NotSupportedException("Please be nice about the doc format.")
+    require(isGoodKDoc()) { "Please be nice about the doc format." }
     return map { it.drop(kdocLineStarterLength) }
 }
 

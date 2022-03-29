@@ -1,3 +1,5 @@
 .gradle/
 .idea/
 build/
+buildPlugin/
+dtest_playground/src/generatedTests/**

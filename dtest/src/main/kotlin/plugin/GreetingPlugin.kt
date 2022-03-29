@@ -1,24 +1,24 @@
 package plugin
 
-//import generateTests
+
 import generateTests
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.Test
 import java.io.File
 
 @Suppress("unused") // Is used in build.gradle.kts
 class GreetingPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val java = project.extensions
-            .getByType(JavaPluginExtension::class.java)
+        val java = project.extensions.getByType(JavaPluginExtension::class.java)
         val sourceSets = java.sourceSets
 
-        val generatedSourceSet: SourceSet = sourceSets.create("generatedTests") {
-            it.java.srcDir("src/generated_tests/kotlin")
+        val generatedSourceSet = sourceSets.create("generatedTests") {
         }
+
+        generatedSourceSet.compileClasspath += sourceSets.named("main").orNull?.output!!
+        generatedSourceSet.runtimeClasspath += sourceSets.named("main").orNull?.output!!
 
         project.dependencies.apply {
             add("generatedTestsImplementation", "org.junit.jupiter:junit-jupiter:5.8.1")
@@ -36,16 +36,21 @@ class GreetingPlugin : Plugin<Project> {
         }
 
         project.tasks.register("dtestsGenerateFiles") {
-            val oneDirectory = generatedSourceSet.java.srcDirs.first()!!
-            val files = oneDirectory.allFiles()
+            val generatedSrcsDirectory = generatedSourceSet.java.srcDirs.first()!!
+            println(generatedSrcsDirectory)
+            val mainSrcDirectory = java.sourceSets.named("main").orNull
+                ?: throw InternalError("No main module!")
+
+            val files = mainSrcDirectory.java.sourceDirectories.first()!!.allFiles()
+            println("main is ${mainSrcDirectory.java.sourceDirectories.files} with files ${files}")
             for (file in files) {
-                generateTests(file, oneDirectory)
+                generateTests(file, generatedSrcsDirectory)
             }
         }
     }
 
     private fun File.allFiles(): List<File> =
-        listFiles().filter { it.isFile } +
-                listFiles().filter { it.isDirectory }.flatMap { it.allFiles() }
+        (listFiles() ?: arrayOf()).filter { it.isFile } +
+                (listFiles() ?: arrayOf()).filter { it.isDirectory }.flatMap { it.allFiles() }
 }
 

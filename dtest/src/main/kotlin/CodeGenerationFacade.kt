@@ -60,6 +60,8 @@ fun generateTests(file: File, root: File) {
 
 fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: String) {
     val newFile = File(folderForGeneratedFile, name)
+    val parentFile = newFile.parentFile
+    parentFile.mkdirs()
     newFile.createNewFile()
     newFile.writeText(fileGenerated.joinToString(System.lineSeparator()))
 }

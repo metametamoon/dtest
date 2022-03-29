@@ -1,5 +1,5 @@
-This is a prototype for running tests from documentation.
-The test in [EvalTest.kt](src/test/kotlin/EvalTest.kt) runs the documentation tests in [Sum.kt](src/main/kotlin/Sum.kt) (the last test fails on purpose).
+This is a prototype for running tests from documentation. The test in [EvalTest.kt](dtest/src/test/kotlin/EvalTest.kt)
+runs the documentation tests in [Sum.kt](dtest/src/main/kotlin/Sum.kt) (the last test fails on purpose).
 
 Currently, each kdoc line that starts with ``>>>`` marks an assertion that will be executed as a separate test.
 Only ```assertEquals``` method is currently supported for assertions.
