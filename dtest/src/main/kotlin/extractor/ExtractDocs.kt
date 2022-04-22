@@ -16,6 +16,7 @@ fun extractDocs(currentFile: KtFile): Ok<ExtractedDocs> {
             }
             return super.visitDeclaration(dcl, data)
         }
+
     })
     return Ok(ExtractedDocs(documentations))
 }

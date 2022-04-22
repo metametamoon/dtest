@@ -1,14 +1,13 @@
 repositories {
     mavenLocal()
     mavenCentral()
+    gradlePluginPortal()
 }
 
-beforeEvaluate { println("beforeEvAL") }
-afterEvaluate { println("afterEval") }
 
 plugins {
-    kotlin("jvm") version "1.6.10"
     application
+    kotlin("jvm") version "1.6.10"
     id("plugin") version "1.0"
 }
 
@@ -28,3 +27,13 @@ tasks.test {
 application {
     mainClass.set("MainKt")
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+//tasks.named("compileGeneratedTestsKotlin") {
+//    dependsOn(rootProject.project("dtest").tasks.getByName("publish"))
+//}
