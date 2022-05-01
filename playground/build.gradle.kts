@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     application
-    id("plugin") version "1.0"
+    id("dtest-plugin") version "1.0"
 }
 
 group = "com.github.metametamoon"

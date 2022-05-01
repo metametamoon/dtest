@@ -1,4 +1,4 @@
 rootProject.name = "dtest_total"
 
-include("dtest_playground")
+include("playground")
 includeBuild("dtest")

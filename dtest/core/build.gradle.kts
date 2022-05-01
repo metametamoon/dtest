@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.intellij") version "1.4.0"
-    `java-gradle-plugin`
     `maven-publish`
 }
 
@@ -43,25 +42,5 @@ intellij {
 tasks.test {
     useJUnit()
     useJUnitPlatform()
-}
-
-gradlePlugin {
-    plugins {
-        create("hello") {
-            id = "plugin"
-            implementationClass = "plugin.DtestPlugin"
-            version = "1.0"
-        }
-    }
-}
-
-
-publishing {
-    repositories {
-        maven {
-            rootProject.layout
-            url = uri(rootProject.layout.buildDirectory.dir("repo"))
-        }
-    }
 }
 
