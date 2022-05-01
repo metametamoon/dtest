@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.10"
-    application
     id("dtest-plugin") version "1.0"
+    application
 }
 
 group = "com.github.metametamoon"
@@ -9,10 +9,8 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
+    gradlePluginPortal()
+    google()
 }
 
 tasks.test {
@@ -41,7 +39,8 @@ val dtestImplementation by configurations.getting {
 configurations["dtestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 dependencies {
-    dtestImplementation("junit:junit:4.12")
+    dtestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    configurations["dtestRuntimeOnly"]("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
 val integrationTest = task<Test>("runDtests") {
@@ -51,6 +50,7 @@ val integrationTest = task<Test>("runDtests") {
     testClassesDirs = sourceSets["dtest"].output.classesDirs
     classpath = sourceSets["dtest"].runtimeClasspath
     shouldRunAfter("test")
+    useJUnit()
     useJUnitPlatform()
 }
 

@@ -9,6 +9,7 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
     maven {
         url = uri("https://www.jetbrains.com/intellij-repository/releases")
     }
@@ -21,6 +22,7 @@ repositories {
 dependencies {
     implementation(project(":core"))
 }
+
 
 
 gradlePlugin {
@@ -38,7 +40,6 @@ gradlePlugin {
 publishing {
     repositories {
         maven {
-            rootProject.layout
             url = uri(rootProject.layout.buildDirectory.dir("repo"))
         }
     }

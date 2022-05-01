@@ -44,3 +44,22 @@ tasks.test {
     useJUnitPlatform()
 }
 
+publishing {
+    repositories {
+        maven {
+            url = uri(rootProject.layout.buildDirectory.dir("repo"))
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.github.metametamoon"
+            artifactId = "core"
+            version = "1.0"
+
+            from(components["java"])
+        }
+    }
+}
+
+
+
