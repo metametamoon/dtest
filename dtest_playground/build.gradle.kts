@@ -4,7 +4,7 @@ plugins {
     id("plugin") version "1.0"
 }
 
-group = "me.metametamoon"
+group = "com.github.metametamoon"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -20,36 +20,36 @@ tasks.test {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 application {
     mainClass.set("MainKt")
 }
 sourceSets {
-    create("intTest") {
+    create("dtest") {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
         java.srcDir("src/dtest/kotlin")
     }
 }
 
-val intTestImplementation by configurations.getting {
+val dtestImplementation by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
 }
 
-configurations["intTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
+configurations["dtestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 dependencies {
-    intTestImplementation("junit:junit:4.12")
+    dtestImplementation("junit:junit:4.12")
 }
 
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs integration tests."
+val integrationTest = task<Test>("runDtests") {
+    description = "Runs dtests."
     group = "verification"
 
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
+    testClassesDirs = sourceSets["dtest"].output.classesDirs
+    classpath = sourceSets["dtest"].runtimeClasspath
     shouldRunAfter("test")
     useJUnitPlatform()
 }

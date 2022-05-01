@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-group = "me.metametamoon"
+group = "com.github.metametamoon"
 version = "1.0"
 
 repositories {
