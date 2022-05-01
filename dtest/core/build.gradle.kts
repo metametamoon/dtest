@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.metametamoon"
-version = "1.0"
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -52,9 +52,9 @@ publishing {
     }
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.github.metametamoon"
+            groupId = rootProject.group as String?
             artifactId = "core"
-            version = "1.0"
+            version = rootProject.version as String?
 
             from(components["java"])
         }

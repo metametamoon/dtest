@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.metametamoon"
-version = "1.0"
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ gradlePlugin {
     plugins {
         create("DtestPlugin") {
             id = "dtest-plugin"
-            group = "com.github.metametamoon"
+            group = rootProject.group
             implementationClass = "plugin.DtestPlugin"
             version = "1.0"
         }
