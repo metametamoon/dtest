@@ -5,14 +5,17 @@
     <vendor>JetBrains</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="org.jetbrains.plugins.template.services.MyApplicationService"/>
-        <projectService serviceImplementation="org.jetbrains.plugins.template.services.MyProjectService"/>
+        <applicationService serviceImplementation="com.github.metametamoon.dtest.services.MyApplicationService"/>
+        <projectService serviceImplementation="com.github.metametamoon.dtest.services.MyProjectService"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="com.github.metametamoon.dtest.MarkerProvider"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="org.jetbrains.plugins.template.listeners.MyProjectManagerListener"
+        <listener class="com.github.metametamoon.dtest.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 </idea-plugin>

@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.metametamoon.dtest.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.metametamoon.dtest.MyBundle
 
 class MyApplicationService {
 
