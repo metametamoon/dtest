@@ -1,4 +1,5 @@
 rootProject.name = "dtest"
 
 include("core")
-include("plugin")
+include("gradle-plugin")
+include("intellij-plugin")
