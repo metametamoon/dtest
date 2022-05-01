@@ -3,3 +3,4 @@
 build/
 buildPlugin/
 dtest_playground/src/generatedTests/**
+/dtest_playground/src/dtest/

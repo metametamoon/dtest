@@ -1,7 +1,10 @@
 package generation
 
 import TestInfo
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
@@ -24,14 +27,6 @@ fun generateTestFile(
     for (type in classes) {
         file = file.addType(type)
     }
-    file = file.addFunction(
-        FunSpec.builder("shouldBe")
-            .addModifiers(KModifier.PRIVATE, KModifier.INFIX)
-            .receiver(ClassName("kotlin", "Any"))
-            .addParameter("expected", ClassName("kotlin", "Any"))
-            .addCode("Assertions.assertEquals(expected, this)")
-            .build()
-    )
 
     val code = file.build().toString()
     return code.split("\n")

@@ -1,12 +1,11 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.intellij") version "1.4.0"
-//    id("org.gradle.kotlin.kotlin-dsl") version "2.3.0"
     `java-gradle-plugin`
     `maven-publish`
 }
 
-group = "me.james"
+group = "me.metametamoon"
 version = "1.0"
 
 repositories {
@@ -65,23 +64,4 @@ publishing {
         }
     }
 }
-
-//sourceSets {
-//    create("intTest") {
-//        compileClasspath += sourceSets.main.get().output
-//        runtimeClasspath += sourceSets.main.get().output
-//    }
-//}
-//
-//sourceSets {
-//    create("integrationTest") {
-//
-//        withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-//            kotlin.srcDir("src/integrationTest/kotlin")
-//            resources.srcDir("src/integrationTest/resources")
-//            compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
-//            runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
-//        }
-//    }
-//}
 

@@ -1,4 +1,4 @@
 /**
- * ``` f() shouldBe 42 ```
+ * ``` Assertions.assertEquals(42, f()) ```
  */
 fun f() = 42
