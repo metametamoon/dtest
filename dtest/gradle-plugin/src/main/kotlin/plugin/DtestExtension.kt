@@ -1,13 +1,13 @@
 package plugin
 
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 
 abstract class DtestExtension {
     @get:OutputDirectory
-    abstract val directoryForGeneration: RegularFileProperty
+    abstract val directoryForGeneration: DirectoryProperty
 
     @get: InputDirectory
-    abstract val directoryWithKotlinSource: RegularFileProperty
+    abstract val directoryWithKotlinSource: DirectoryProperty
 }

@@ -35,7 +35,6 @@ internal val globalKotlinParserOnlyProject by lazy {
     configuration.put(
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
     )
-
     KotlinCoreEnvironment.createForProduction(
         Disposer.newDisposable(),
         configuration,
@@ -43,8 +42,8 @@ internal val globalKotlinParserOnlyProject by lazy {
     ).project
 }
 
-private fun createKtFile(
-    file: File, project: Project
+fun createKtFile(
+    file: File, project: Project = globalKotlinParserOnlyProject
 ): KtFile {
     val codeString = file.readLines().joinToString("\n")
     val fileName = file.name
