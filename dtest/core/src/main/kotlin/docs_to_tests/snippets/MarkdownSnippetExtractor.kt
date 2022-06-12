@@ -2,11 +2,15 @@ package docs_to_tests.snippets
 
 import util.trimDocs
 
-class MarkdownSnippetExtractor : CodeSnippetsExtractor {
+data class CodeSnippet(
+    val snippet: String
+)
+
+open class MarkdownSnippetExtractor {
     private val markdownCodePattern =
         "```(.*?)```".toRegex(option = RegexOption.DOT_MATCHES_ALL)
 
-    override fun extractCodeSnippets(docText: List<String>): List<CodeSnippet> {
+    fun extractCodeSnippets(docText: List<String>): List<CodeSnippet> {
         val trimmedDoc = docText.trimDocs().joinToString("\n")
         val partWithTests = trimmedDoc.substringAfter("Tests:")
         return markdownCodePattern.findAll(partWithTests).map { match ->
@@ -16,3 +20,4 @@ class MarkdownSnippetExtractor : CodeSnippetsExtractor {
         }.toList()
     }
 }
+

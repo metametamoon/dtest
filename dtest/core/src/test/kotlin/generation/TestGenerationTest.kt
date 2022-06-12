@@ -25,7 +25,7 @@ internal val globalKotlinParserOnlyProject by lazy {
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
     )
 
-    KotlinCoreEnvironment.createForProduction(
+    KotlinCoreEnvironment.createForTests(
         Disposer.newDisposable(),
         configuration,
         EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -49,8 +49,10 @@ private class TestGenerationTest {
         testInfos: List<TestInfo>,
         fqName: FqName,
     ) {
+        val file = File(expectedCodeGenerationFileName)
+        println(file.absolutePath)
         val properlyGeneratedCode = createKtFile(
-            File(expectedCodeGenerationFileName).readText()
+            file.readText()
                 .replace("\r\n", "\n"),
             expectedCodeGenerationFileName.substringAfterLast("/"),
             globalKotlinParserOnlyProject
@@ -77,7 +79,7 @@ private class TestGenerationTest {
         checkFileGeneration(
             "testData/sum/TestSum.kt",
             listOf(
-                TestInfo("f", listOf(CodeSnippet("f() shouldBe 42")))
+                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())")))
             ), FqName("")
         )
     }
@@ -87,8 +89,8 @@ private class TestGenerationTest {
         checkFileGeneration(
             "testData/sum/FAndG.kt",
             listOf(
-                TestInfo("f", listOf(CodeSnippet("f() shouldBe 42"))),
-                TestInfo("g", listOf(CodeSnippet("g() shouldBe -42")))
+                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())"))),
+                TestInfo("g", listOf(CodeSnippet("Assertions.assertEquals(-42, g())")))
             ), FqName("")
         )
     }

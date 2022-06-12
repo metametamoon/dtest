@@ -12,6 +12,14 @@ internal class MarkdownSnippetExtractorTest {
          */
     """.trimIndent().split("\n")
 
+    private val oneLineWithStarWithoutSpaceAfter = """
+        /**
+         * Must return 42.
+         *
+         * Tests: ```f() shouldBe 42```
+         */
+    """.trimIndent().split("\n")
+
     private val multiLine = """
         /**
          * Must return 42.
@@ -35,6 +43,14 @@ internal class MarkdownSnippetExtractorTest {
     fun `one test on one line`() {
         Assertions.assertEquals(
             markdownExtractor.extractCodeSnippets(oneLine),
+            listOf(CodeSnippet("f() shouldBe 42"))
+        )
+    }
+
+    @Test
+    fun `test asterisk without space after it`() {
+        Assertions.assertEquals(
+            markdownExtractor.extractCodeSnippets(oneLineWithStarWithoutSpaceAfter),
             listOf(CodeSnippet("f() shouldBe 42"))
         )
     }
