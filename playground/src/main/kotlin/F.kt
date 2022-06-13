@@ -1,6 +1,7 @@
 // dtestBaseClass="PrintTestBase"
 
 /**
- * ``` Assertions.assertEquals(fortyTwo, f()) ```
+ * <!--```import org.junit.jupiter.api.Assertions```-->
+ * ```Assertions.assertEquals(fortyTwo, f())```
  */
 fun f() = 42

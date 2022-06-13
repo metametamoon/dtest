@@ -43,7 +43,7 @@ internal class MarkdownSnippetExtractorTest {
     fun `one test on one line`() {
         Assertions.assertEquals(
             markdownExtractor.extractCodeSnippets(oneLine),
-            listOf(CodeSnippet("f() shouldBe 42"))
+            listOf(CodeSnippet("f() shouldBe 42", null))
         )
     }
 
@@ -51,7 +51,7 @@ internal class MarkdownSnippetExtractorTest {
     fun `test asterisk without space after it`() {
         Assertions.assertEquals(
             markdownExtractor.extractCodeSnippets(oneLineWithStarWithoutSpaceAfter),
-            listOf(CodeSnippet("f() shouldBe 42"))
+            listOf(CodeSnippet("f() shouldBe 42", null))
         )
     }
 
@@ -59,7 +59,7 @@ internal class MarkdownSnippetExtractorTest {
     fun `one test on multiple lines`() {
         Assertions.assertEquals(
             markdownExtractor.extractCodeSnippets(multiLine),
-            listOf(CodeSnippet("\nval x = f()\nx shouldBe 42\n"))
+            listOf(CodeSnippet("\nval x = f()\nx shouldBe 42\n", null))
         )
     }
 
@@ -68,8 +68,8 @@ internal class MarkdownSnippetExtractorTest {
         Assertions.assertEquals(
             markdownExtractor.extractCodeSnippets(multiTest),
             listOf(
-                CodeSnippet("f() shouldBe 42"),
-                CodeSnippet("f() != 43")
+                CodeSnippet("f() shouldBe 42", null),
+                CodeSnippet("f() != 43", null)
             )
         )
     }

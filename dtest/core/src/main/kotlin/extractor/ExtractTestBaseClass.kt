@@ -5,6 +5,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
+/**
+ * Looks for the base test class setting in the comments of [ktFile].
+ * The current setting format is `dtestBaseClass="com.example.SampleBase"`.
+ */
 fun extractBaseTestClass(ktFile: KtFile): FqName? {
     var baseTestClassFqName: FqName? = null
     val visitor = object : KtTreeVisitorVoid() {

@@ -79,7 +79,7 @@ private class TestGenerationTest {
         checkFileGeneration(
             "testData/sum/TestSum.kt",
             listOf(
-                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())")))
+                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())", null)))
             ), FqName("")
         )
     }
@@ -89,8 +89,8 @@ private class TestGenerationTest {
         checkFileGeneration(
             "testData/sum/FAndG.kt",
             listOf(
-                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())"))),
-                TestInfo("g", listOf(CodeSnippet("Assertions.assertEquals(-42, g())")))
+                TestInfo("f", listOf(CodeSnippet("Assertions.assertEquals(42, f())", null))),
+                TestInfo("g", listOf(CodeSnippet("Assertions.assertEquals(-42, g())", null)))
             ), FqName("")
         )
     }
