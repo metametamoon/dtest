@@ -1,16 +1,17 @@
 package plugin
 
-import generateTests
+import DtestFileGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileType
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.relativeToOrNull
 
@@ -22,15 +23,18 @@ abstract class DtestGenerateTask : DefaultTask() {
     @get:OutputDirectory
     abstract val directoryForGeneration: DirectoryProperty
 
-    @OptIn(ExperimentalPathApi::class)
+    @get:Input
+    abstract val defaultTestAnnotationFqName: Property<String>
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
+        val facade = DtestFileGenerator(defaultTestAnnotationFqName.get())
         inputChanges.getFileChanges(directoryWithKotlinSource)
             .filter { it.fileType == FileType.FILE }
             .filter { it.file.extension == "kt" }
             .forEach {
                 if (it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED)
-                    generateTests(it.file, directoryForGeneration.get().asFile)
+                    facade.generateTests(it.file, directoryForGeneration.get().asFile)
                 else {
                     val relativePath = Path(it.file.absolutePath)
                         .relativeToOrNull(Path(directoryWithKotlinSource.asFile.get().absolutePath)) ?: run {
@@ -46,7 +50,6 @@ abstract class DtestGenerateTask : DefaultTask() {
                     }
 
                 }
-                println("File ${it.file.name} with type ${it.changeType}")
             }
     }
 

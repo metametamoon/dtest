@@ -3,18 +3,19 @@ package generation
 import TestInfo
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.name.FqName
-import org.junit.jupiter.api.Test
 
 fun generateTestFile(
     testInfos: List<TestInfo>,
     packageFqName: FqName,
-    baseClassFqName: FqName? = null
+    defaultTestAnnotationFqName: String,
+    baseClassFqName: FqName? = null,
 ): List<String> {
+    val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
     val classes = testInfos.map { testInfo ->
         TypeSpec.Companion.classBuilder(testInfo.name + " tests")
             .addFunction(
                 FunSpec.builder("1").addAnnotation(
-                    Test::class
+                    ClassName(testAnnotationFqName.parent().asString(), testAnnotationFqName.shortName().asString())
                 ).addCode(testInfo.snippets.first().snippet).build()
             )
             .addModifiers(KModifier.PRIVATE)

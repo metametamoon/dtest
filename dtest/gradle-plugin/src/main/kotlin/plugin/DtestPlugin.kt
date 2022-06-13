@@ -17,10 +17,12 @@ class DtestPlugin : Plugin<Project> {
             project.layout.projectDirectory.dir("src/main/kotlin")
         )
 
+        extension.defaultTestAnnotationFqName.convention("org.junit.jupiter.api.Test")
+
         project.tasks.register("dtestGenerate", DtestGenerateTask::class.java) {
             it.directoryWithKotlinSource.set(extension.directoryWithKotlinSource)
             it.directoryForGeneration.set(extension.directoryForGeneration)
-
+            it.defaultTestAnnotationFqName.set(extension.defaultTestAnnotationFqName)
         }
 
     }

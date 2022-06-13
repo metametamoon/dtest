@@ -58,7 +58,7 @@ private class TestGenerationTest {
             globalKotlinParserOnlyProject
         )
         val actualGeneratedCode =
-            generateTestFile(testInfos, fqName).joinToString("\n")
+            generateTestFile(testInfos, fqName, "org.junit.jupiter.api.Test").joinToString("\n")
 
         val actualFile = createKtFile(
             actualGeneratedCode,
