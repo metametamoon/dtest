@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.intellij") version "1.4.0"
     `maven-publish`
 }
 
@@ -22,11 +21,8 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    implementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.20")
 
@@ -34,9 +30,6 @@ dependencies {
     implementation("com.squareup:kotlinpoet:1.10.2")
 }
 
-intellij {
-    version.set("2021.3.2")
-}
 
 tasks.test {
     useJUnitPlatform()
