@@ -1,4 +1,6 @@
+// dtestBaseClass="PrintTestBase"
+
 /**
- * ``` Assertions.assertEquals(42, f()) ```
+ * ``` Assertions.assertEquals(fortyTwo, f()) ```
  */
 fun f() = 42

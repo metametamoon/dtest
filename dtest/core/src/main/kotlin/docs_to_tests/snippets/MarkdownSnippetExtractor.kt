@@ -6,7 +6,7 @@ data class CodeSnippet(
     val snippet: String
 )
 
-open class MarkdownSnippetExtractor {
+class MarkdownSnippetExtractor {
     private val markdownCodePattern =
         "```(.*?)```".toRegex(option = RegexOption.DOT_MATCHES_ALL)
 

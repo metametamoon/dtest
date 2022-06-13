@@ -6,6 +6,7 @@ import docs_to_tests.snippets.CodeSnippet
 import docs_to_tests.snippets.MarkdownSnippetExtractor
 import docs_to_tests.snippets.asText
 import extractor.ExtractedDocs
+import extractor.extractBaseTestClass
 import extractor.extractDocs
 import generation.generateTestFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -20,15 +21,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 @Suppress("unused")
-fun generateTests(ktFile: KtFile, root: File) {
+fun generateTests(ktFile: KtFile, generatedFilesFolder: File) {
     setIdeaIoUseFallback()
     val extractedDocs: ExtractedDocs = extractDocs(ktFile).value
     val testInfos = extractTestInfos(extractedDocs)
     val packageFqName = ktFile.packageFqName
-    val fileGenerated = generateTestFile(testInfos, packageFqName)
-    val folderForGeneratedFile: File = findCorrespondingFolder(root, packageFqName)
+    val extractedBaseTestClass = extractBaseTestClass(ktFile)
+    val fileGenerated = generateTestFile(testInfos, packageFqName, extractedBaseTestClass)
+    val folderForGeneratedFile: File = findCorrespondingFolder(generatedFilesFolder, packageFqName)
     placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
 }
+
 
 internal val globalKotlinParserOnlyProject by lazy {
     val configuration = CompilerConfiguration()
@@ -42,7 +45,7 @@ internal val globalKotlinParserOnlyProject by lazy {
     ).project
 }
 
-fun createKtFile(
+private fun createKtFile(
     file: File, project: Project = globalKotlinParserOnlyProject
 ): KtFile {
     val codeString = file.readLines().joinToString("\n")
@@ -52,9 +55,10 @@ fun createKtFile(
     ) as KtFile
 }
 
-fun generateTests(file: File, root: File) {
+
+fun generateTests(file: File, generatedFilesFolder: File) {
     val ktFile = createKtFile(file, globalKotlinParserOnlyProject)
-    generateTests(ktFile, root)
+    generateTests(ktFile, generatedFilesFolder)
 }
 
 fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: String) {
@@ -65,7 +69,7 @@ fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: S
     newFile.writeText(fileGenerated.joinToString(System.lineSeparator()))
 }
 
-fun findCorrespondingFolder(root: File, packageFqName: FqName): File {
+private fun findCorrespondingFolder(root: File, packageFqName: FqName): File {
     val segments = packageFqName.pathSegments()
     return segments.fold(root) { file, nextSegment -> file.resolve(nextSegment.asString()) }
 }

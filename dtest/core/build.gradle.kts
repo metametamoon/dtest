@@ -28,7 +28,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.20")
 
 
     implementation("com.squareup:kotlinpoet:1.10.2")

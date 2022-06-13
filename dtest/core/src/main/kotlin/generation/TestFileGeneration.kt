@@ -1,16 +1,14 @@
 package generation
 
 import TestInfo
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
 fun generateTestFile(
     testInfos: List<TestInfo>,
-    packageFqName: FqName
+    packageFqName: FqName,
+    baseClassFqName: FqName? = null
 ): List<String> {
     val classes = testInfos.map { testInfo ->
         TypeSpec.Companion.classBuilder(testInfo.name + " tests")
@@ -20,6 +18,16 @@ fun generateTestFile(
                 ).addCode(testInfo.snippets.first().snippet).build()
             )
             .addModifiers(KModifier.PRIVATE)
+            .let {
+                if (baseClassFqName == null)
+                    it
+                else it.superclass(
+                    ClassName(
+                        baseClassFqName.parent().asString(),
+                        baseClassFqName.shortName().asString()
+                    )
+                )
+            }
             .build()
     }
     var file = FileSpec.builder(packageFqName.asString(), "A")
