@@ -17,7 +17,7 @@ private fun inMarkdownComment(pattern: String) = "<!--$pattern-->"
 class MarkdownSnippetExtractor {
     private val kdocTestPattern =
         (optional(inMarkdownComment(markdownCodePattern(importsCode))) + "\\s*" + markdownCodePattern(testCode))
-            .toRegex()
+            .toRegex(RegexOption.DOT_MATCHES_ALL)
 
     fun extractCodeSnippets(docText: List<String>): List<CodeSnippet> {
         val trimmedDoc = docText.trimDocs().joinToString("\n")
