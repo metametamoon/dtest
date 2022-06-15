@@ -8,13 +8,6 @@ version = rootProject.version
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://www.jetbrains.com/intellij-repository/releases")
-    }
-    maven {
-        url =
-            uri("https://cache-redirector.jetbrains.com/intellij-dependencies")
-    }
 }
 
 dependencies {
@@ -24,7 +17,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.20")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.5.31")
 
 
     implementation("com.squareup:kotlinpoet:1.10.2")
