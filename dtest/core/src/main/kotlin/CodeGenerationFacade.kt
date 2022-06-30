@@ -40,10 +40,12 @@ class DtestFileGenerator(private val defaultTestAnnotationFqName: String) {
         val testInfos = extractTestInfos(extractedDocs)
         val packageFqName = ktFile.packageFqName
         val extractedBaseTestClass = extractBaseTestClass(ktFile)
-        val fileGenerated =
-            generateTestFile(testInfos, packageFqName, defaultTestAnnotationFqName, extractedBaseTestClass)
-        val folderForGeneratedFile: File = findCorrespondingFolder(generatedFilesFolder, packageFqName)
-        placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
+        if (testInfos.isNotEmpty()) {
+            val fileGenerated =
+                generateTestFile(testInfos, packageFqName, defaultTestAnnotationFqName, extractedBaseTestClass)
+            val folderForGeneratedFile: File = findCorrespondingFolder(generatedFilesFolder, packageFqName)
+            placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
+        }
     }
 
 
@@ -89,6 +91,6 @@ class DtestFileGenerator(private val defaultTestAnnotationFqName: String) {
             val snippets =
                 MarkdownSnippetExtractor().extractCodeSnippets(documentation.asText())
             TestInfo(name, snippets)
-        }
+        }.filter { testInfo -> testInfo.snippets.isNotEmpty() } // skip the components without test blocks
 }
 

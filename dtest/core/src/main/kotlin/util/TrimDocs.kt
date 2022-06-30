@@ -8,10 +8,7 @@ private const val kdocLineStarterLength = 3
  * f
  * f
  */
-fun List<String>.trimDocs(): List<String> {
-    require(isGoodKDoc()) { "Please be nice about the doc format." }
-    return map { it.drop(kdocLineStarterLength) }
-}
+fun List<String>.trimDocs(): List<String> = map { it.drop(kdocLineStarterLength) }
 
 private fun List<String>.isGoodKDoc(): Boolean {
     if (this.size < 2) return false

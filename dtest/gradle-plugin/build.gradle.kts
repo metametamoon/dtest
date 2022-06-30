@@ -9,7 +9,6 @@ version = rootProject.version
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
-    kotlinOptions.freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
 }
 
 
@@ -47,6 +46,13 @@ gradlePlugin {
     }
 }
 
+//val relocateShadowJar by tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
+//    target = tasks.named("shadowJar").get() as com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar?
+//}
+//
+//tasks.named("shadowJar") {
+//    dependsOn(relocateShadowJar)
+//}
 
 publishing {
     repositories {
@@ -56,3 +62,9 @@ publishing {
     }
 }
 
+tasks.named("build") {
+    doFirst {
+        println("gradle-plugin classpath:")
+        sourceSets.main.get().runtimeClasspath.forEach(::println)
+    }
+}

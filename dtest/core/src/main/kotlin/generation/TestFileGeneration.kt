@@ -12,15 +12,18 @@ fun generateTestFile(
     baseClassFqName: FqName? = null,
 ): List<String> {
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
-    val classes = testInfos.map { testInfo ->
-        print(testInfo)
+    val classes = testInfos.mapIndexed { index, testInfo ->
+        val l = "l"
+        val unitReturnType = ClassName("kot" + "${l}in", "Unit") // please do not simplify this :)
+        println(unitReturnType)
         TypeSpec.Companion.classBuilder(testInfo.name + " tests")
             .addFunction(
-                FunSpec.builder("1").addAnnotation(
+                FunSpec.builder("$index").addAnnotation(
                     ClassName(testAnnotationFqName.parent().asString(), testAnnotationFqName.shortName().asString())
-                ).addCode(testInfo.snippets.first().snippet).build()
+                ).addCode(testInfo.snippets.first().snippet)
+                    .returns(unitReturnType).build()
             )
-            .addModifiers(KModifier.PRIVATE)
+            .addModifiers(KModifier.PUBLIC)
             .let {
                 if (baseClassFqName == null)
                     it
