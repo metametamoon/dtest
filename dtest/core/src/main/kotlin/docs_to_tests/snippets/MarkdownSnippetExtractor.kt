@@ -21,7 +21,7 @@ class MarkdownSnippetExtractor {
 
     fun extractCodeSnippets(docText: List<String>): List<CodeSnippet> {
         val trimmedDoc = docText.trimDocs().joinToString("\n")
-        val partWithTests = trimmedDoc.substringAfter("Tests:")
+        val partWithTests = trimmedDoc.substringAfter("<!--dtests-->", "")
         return kdocTestPattern.findAll(partWithTests).map { match ->
             val code = match.groups[testCode]?.value
                 ?: throw InternalError("No group named $testCode ${kdocTestPattern.pattern}")
