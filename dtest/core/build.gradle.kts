@@ -12,30 +12,10 @@ repositories {
 }
 
 
-val outsideShadowJar by configurations.creating {
-    isCanBeResolved = false
-    isCanBeConsumed = true
-}
-
-
-configurations.shadow {
-    extendsFrom(outsideShadowJar)
-}
-
-configurations.implementation {
-    extendsFrom(outsideShadowJar)
-}
-
-val outsideJarDependencies = mutableListOf<String>()
-fun DependencyHandlerScope.putOutsideShadowJar(config: String) {
-    outsideShadowJar(config)
-    outsideJarDependencies.add(config)
-}
-
 dependencies {
-    putOutsideShadowJar("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
-    putOutsideShadowJar("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
-    putOutsideShadowJar("com.squareup:kotlinpoet:1.10.2")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
+    implementation("com.squareup:kotlinpoet:1.10.2")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.20")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
@@ -47,11 +27,6 @@ dependencies {
 tasks.shadowJar {
     archiveClassifier.set("")
     from(sourceSets.main.get().allSource)
-//    dependencies {
-//        for (config in outsideJarDependencies) {
-//            exclude(dependency(config))
-//        }
-//    }
 }
 
 val relocateShadowJar by tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation>("relocateShadowJar") {
