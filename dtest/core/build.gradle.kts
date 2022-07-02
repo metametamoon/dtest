@@ -45,6 +45,7 @@ tasks.withType<Zip>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+    workingDir = project.layout.projectDirectory.asFile.resolve("testData")
 }
 
 publishing {
