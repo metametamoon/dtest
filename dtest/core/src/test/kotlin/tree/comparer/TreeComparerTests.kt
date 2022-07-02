@@ -58,4 +58,9 @@ class TreeComparerTests {
     fun `compare different trees`() {
         assertFalse(compareFilesInFolder(File("tree-comparing").resolve("different")))
     }
+
+    @Test
+    fun `ignore public modifiers`() {
+        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("ignore-public-access-modifier")))
+    }
 }
