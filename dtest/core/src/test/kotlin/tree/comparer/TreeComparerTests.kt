@@ -60,7 +60,17 @@ class TreeComparerTests {
     }
 
     @Test
-    fun `ignore public modifiers`() {
+    fun `ignore public modifiers on functions`() {
         assertTrue(compareFilesInFolder(File("tree-comparing").resolve("ignore-public-access-modifier")))
+    }
+
+    @Test
+    fun `ignore public modifiers on functions on all depth levels`() {
+        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("ignore-public-access-modifier-deep")))
+    }
+
+    @Test
+    fun `private modifier makes the tree different`() {
+        assertFalse(compareFilesInFolder(File("tree-comparing").resolve("private-modifier")))
     }
 }
