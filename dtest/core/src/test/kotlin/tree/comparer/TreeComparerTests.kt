@@ -44,33 +44,45 @@ class TreeComparerTests {
         return TreeComparer().compare(expectedFile, actualFile)
     }
 
+    private val treeComparingDirectory = File("tree-comparing")
+
     @Test
     fun `compare identical trees`() {
-        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("identical")))
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("identical")))
     }
 
     @Test
     fun `compare differing only in spaces trees`() {
-        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("diff-in-spaces")))
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("diff-in-spaces")))
     }
 
     @Test
     fun `compare different trees`() {
-        assertFalse(compareFilesInFolder(File("tree-comparing").resolve("different")))
+        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("different")))
     }
 
     @Test
     fun `ignore public modifiers on functions`() {
-        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("ignore-public-access-modifier")))
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("ignore-public-access-modifier")))
     }
 
     @Test
     fun `ignore public modifiers on functions on all depth levels`() {
-        assertTrue(compareFilesInFolder(File("tree-comparing").resolve("ignore-public-access-modifier-deep")))
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("ignore-public-access-modifier-deep")))
     }
 
     @Test
     fun `private modifier makes the tree different`() {
-        assertFalse(compareFilesInFolder(File("tree-comparing").resolve("private-modifier")))
+        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("private-modifier")))
+    }
+
+    @Test
+    fun `unit return type can be omitted`() {
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("unit-return-type")))
+    }
+
+    @Test
+    fun `non-unit return type cannot be omitted`() {
+        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("non-unit-return-type")))
     }
 }
