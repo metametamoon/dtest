@@ -4,11 +4,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 
-val PsiElement.childrenNoWhitespaces: List<PsiElement>
+private val PsiElement.childrenNoWhitespaces: List<PsiElement>
     get() {
         var currentChild: PsiElement? = firstChild
         val allChildren = mutableListOf<PsiElement>()
@@ -27,12 +25,35 @@ class TreeComparer {
             is LeafPsiElement -> {
                 actual is LeafPsiElement && expected.text == actual.text
             }
+
+            is KtFile -> {
+                if (actual !is KtFile)
+                    false
+                else {
+                    val expectedChildren = expected.childrenNoWhitespaces.filter { it !is KtImportList }
+                    val actualChildren = actual.childrenNoWhitespaces.filter { it !is KtImportList }
+                    compareChildren(expectedChildren, actualChildren)
+                }
+            }
+
             is KtNamedFunction -> compareFunctions(expected, actual)
 
             else -> {
                 compareDefault(expected, actual)
             }
         }
+    }
+
+    private fun compareChildren(
+        expectedChildren: List<PsiElement>,
+        actualChildren: List<PsiElement>
+    ): Boolean {
+        return if (expectedChildren.size != actualChildren.size)
+            false
+        else
+            expectedChildren.zip(actualChildren).all { (expectedChild, actualChild) ->
+                compare(expectedChild, actualChild)
+            }
     }
 
     private fun compareFunctions(
@@ -50,9 +71,7 @@ class TreeComparer {
                 !(element is KtModifierList && element.firstChild.text == "public")
             }.trimUnitReturnType()
 
-            return expectedChildren.zip(actualChildren).all { (expectedChild, actualChild) ->
-                compare(expectedChild, actualChild)
-            }
+            return compareChildren(expectedChildren, actualChildren)
         }
     }
 
@@ -60,11 +79,9 @@ class TreeComparer {
         if (expected.childrenNoWhitespaces.size != actual.childrenNoWhitespaces.size)
             false
         else {
-            val all =
-                expected.childrenNoWhitespaces.zip(actual.childrenNoWhitespaces).all { (expectedChild, actualChild) ->
-                    compare(expectedChild, actualChild)
-                }
-            all
+            expected.childrenNoWhitespaces.zip(actual.childrenNoWhitespaces).all { (expectedChild, actualChild) ->
+                compare(expectedChild, actualChild)
+            }
         }
 }
 

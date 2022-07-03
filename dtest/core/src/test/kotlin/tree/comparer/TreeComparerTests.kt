@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class TreeComparerTests {
-    private val kotlinParserProject by lazy {
+    private val kotlinParserProject = run {
         val configuration = CompilerConfiguration()
         configuration.put(
             CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
@@ -48,41 +48,59 @@ class TreeComparerTests {
 
     @Test
     fun `compare identical trees`() {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("identical")))
+        checkComparedSame("identical")
     }
 
     @Test
     fun `compare differing only in spaces trees`() {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("diff-in-spaces")))
+        checkComparedSame("diff-in-spaces")
     }
 
     @Test
     fun `compare different trees`() {
-        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("different")))
+        checkComparedDifferent("different")
     }
 
     @Test
     fun `ignore public modifiers on functions`() {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("ignore-public-access-modifier")))
+        checkComparedSame("ignore-public-access-modifier")
     }
 
     @Test
     fun `ignore public modifiers on functions on all depth levels`() {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("ignore-public-access-modifier-deep")))
+        checkComparedSame("ignore-public-access-modifier-deep")
     }
 
     @Test
     fun `private modifier makes the tree different`() {
-        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("private-modifier")))
+        checkComparedDifferent("private-modifier")
     }
 
     @Test
     fun `unit return type can be omitted`() {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve("unit-return-type")))
+        checkComparedSame("unit-return-type")
     }
 
     @Test
     fun `non-unit return type cannot be omitted`() {
-        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve("non-unit-return-type")))
+        checkComparedDifferent("non-unit-return-type")
+    }
+
+    @Test
+    fun `different imports should not matter`() {
+        checkComparedSame("different-imports")
+    }
+
+    @Test
+    fun `additional imports are not bad`() {
+        checkComparedSame("expected-without-imports")
+    }
+
+    private fun checkComparedDifferent(subfolderName: String) {
+        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve(subfolderName)))
+    }
+
+    private fun checkComparedSame(subfolderName: String) {
+        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve(subfolderName)))
     }
 }
