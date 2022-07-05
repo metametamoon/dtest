@@ -15,8 +15,7 @@ fun generateTestFile(
     val classes = testInfos.mapIndexed { index, testInfo ->
         val l = "l"
         val unitReturnType = ClassName("kot" + "${l}in", "Unit") // please do not simplify this :)
-        println(unitReturnType)
-        TypeSpec.Companion.classBuilder(testInfo.name + " tests")
+        TypeSpec.Companion.classBuilder("${testInfo.name} tests")
             .addFunction(
                 FunSpec.builder("$index").addAnnotation(
                     ClassName(testAnnotationFqName.parent().asString(), testAnnotationFqName.shortName().asString())

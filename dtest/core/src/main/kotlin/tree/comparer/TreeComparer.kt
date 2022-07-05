@@ -5,6 +5,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 private val PsiElement.childrenNoWhitespaces: List<PsiElement>
     get() {
@@ -22,27 +23,26 @@ private val PsiElement.childrenNoWhitespaces: List<PsiElement>
 class TreeComparer {
     fun compare(expected: PsiElement, actual: PsiElement): Boolean {
         return when (expected) {
-            is LeafPsiElement -> {
-                actual is LeafPsiElement && expected.text == actual.text
-            }
-
-            is KtFile -> {
-                if (actual !is KtFile)
-                    false
-                else {
-                    val expectedChildren = expected.childrenNoWhitespaces.filter { it !is KtImportList }
-                    val actualChildren = actual.childrenNoWhitespaces.filter { it !is KtImportList }
-                    compareChildren(expectedChildren, actualChildren)
-                }
-            }
-
+            is LeafPsiElement -> compareLeafElements(expected, actual)
+            is KtFile -> compareKtFiles(expected, actual)
             is KtNamedFunction -> compareFunctions(expected, actual)
-
-            else -> {
-                compareDefault(expected, actual)
-            }
+            else -> compareDefault(expected, actual)
         }
     }
+
+    private fun compareLeafElements(
+        expected: LeafPsiElement,
+        actual: PsiElement
+    ) = actual is LeafPsiElement && expected.text == actual.text
+
+    private fun compareKtFiles(expected: PsiElement, actual: PsiElement) =
+        if (actual !is KtFile)
+            false
+        else {
+            val expectedChildren = expected.childrenNoWhitespaces.filter { it !is KtImportList }
+            val actualChildren = actual.childrenNoWhitespaces.filter { it !is KtImportList }
+            compareChildren(expectedChildren, actualChildren)
+        }
 
     private fun compareChildren(
         expectedChildren: List<PsiElement>,
@@ -60,18 +60,45 @@ class TreeComparer {
         expected: KtNamedFunction,
         actual: PsiElement
     ): Boolean {
-        return if (actual !is KtNamedFunction)
+        return if (actual !is KtNamedFunction) {
             false
-        else {
+        } else {
             val expectedChildren = expected.childrenNoWhitespaces.filter { element ->
-                !(element is KtModifierList && element.firstChild.text == "public")
+                element !is KtModifierList
             }.trimUnitReturnType()
+            val expectedKtModifierListChildren =
+                expected.childrenNoWhitespaces.firstIsInstanceOrNull<KtModifierList>()
+                    ?.childrenNoWhitespaces
+                    ?.filter { !(it is LeafPsiElement && it.text == "public") }
+                    ?: emptyList()
 
             val actualChildren = actual.childrenNoWhitespaces.filter { element ->
-                !(element is KtModifierList && element.firstChild.text == "public")
+                element !is KtModifierList
             }.trimUnitReturnType()
 
-            return compareChildren(expectedChildren, actualChildren)
+            val actualKtModifierListChildren =
+                actual.childrenNoWhitespaces.firstIsInstanceOrNull<KtModifierList>()
+                    ?.childrenNoWhitespaces
+                    ?.filter { !(it is LeafPsiElement && it.text == "public") }
+                    ?: emptyList()
+
+            return compareModifierListChildren(
+                expectedKtModifierListChildren,
+                actualKtModifierListChildren
+            ) && compareChildren(expectedChildren, actualChildren)
+        }
+    }
+
+    private fun compareModifierListChildren(
+        expectedKtModifierListChildren: List<PsiElement>?,
+        actualKtModifierListChildren: List<PsiElement>?
+    ): Boolean {
+        return when {
+            expectedKtModifierListChildren == null && actualKtModifierListChildren == null ->
+                true
+            expectedKtModifierListChildren != null && actualKtModifierListChildren != null ->
+                compareChildren(expectedKtModifierListChildren, actualKtModifierListChildren)
+            else -> false
         }
     }
 
@@ -99,9 +126,9 @@ private fun List<PsiElement>.trimUnitReturnType(): List<PsiElement> {
         } else {
             val following = currentIterator.next()
             require(following is KtTypeReference) { badFollowingOfColonMessage }
-            if (following.text == "Unit")
+            if (following.text == "Unit") {
                 continue
-            else {
+            } else {
                 result.add(current)
                 result.add(following)
             }

@@ -11,7 +11,7 @@ const val testCode = "testCode"
 const val importsCode = "imports"
 
 
-private fun markdownCodePattern(name: String) = "```(?<$name>.*?)```"
+private fun markdownCodePattern(captureGroupName: String) = "```(?<$captureGroupName>.*?)```"
 private fun optional(pattern: String) = "(?:$pattern)?"
 private fun inMarkdownComment(pattern: String) = "<!--$pattern-->"
 class MarkdownSnippetExtractor {
