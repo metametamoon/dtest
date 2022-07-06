@@ -8,7 +8,7 @@ internal class MarkdownSnippetExtractorTest {
     private val oneLine = """
         /**
          * Must return 42.
-         * Tests: ```f() shouldBe 42```
+         * <!--dtests-->: ```f() shouldBe 42```
          */
     """.trimIndent().split("\n")
 
@@ -16,14 +16,14 @@ internal class MarkdownSnippetExtractorTest {
         /**
          * Must return 42.
          *
-         * Tests: ```f() shouldBe 42```
+         * <!--dtests-->: ```f() shouldBe 42```
          */
     """.trimIndent().split("\n")
 
     private val multiLine = """
         /**
          * Must return 42.
-         * Tests: ```
+         * <!--dtests-->: ```
          * val x = f()
          * x shouldBe 42
          * ```
@@ -33,7 +33,7 @@ internal class MarkdownSnippetExtractorTest {
     private val multiTest = """
         /**
          * Must return 42.
-         * Tests: 
+         * <!--dtests-->: 
          * ```f() shouldBe 42```
          * ```f() != 43```
          */
