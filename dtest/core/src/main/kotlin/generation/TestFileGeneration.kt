@@ -5,6 +5,28 @@ import com.squareup.kotlinpoet.*
 import docs_to_tests.snippets.CodeSnippet
 import org.jetbrains.kotlin.name.FqName
 
+private fun TypeSpec.Builder.addFunctionsFromSnippets(
+    testAnnotationFqName: FqName,
+    testInfo: TestInfo
+): TypeSpec.Builder {
+    val unitReturnType = protectedFromShadowingKotlinUnitType()
+    var builder = this
+    for ((index, snippet) in testInfo.snippets.withIndex()) {
+        builder = builder.addFunction(
+            FunSpec.builder(index.toString()).addAnnotation(
+                getClassNameFromFqName(testAnnotationFqName)
+            ).addCode(snippet.snippet)
+                .returns(unitReturnType).build()
+        )
+    }
+    return builder
+}
+
+private fun protectedFromShadowingKotlinUnitType(): ClassName {
+    val l = "l"
+    return ClassName("kot" + "${l}in", "Unit")
+}
+
 fun generateTestFile(
     testInfos: List<TestInfo>,
     packageFqName: FqName,
@@ -13,24 +35,14 @@ fun generateTestFile(
 ): List<String> {
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
     val classes = testInfos.mapIndexed { index, testInfo ->
-        val l = "l"
-        val unitReturnType = ClassName("kot" + "${l}in", "Unit") // please do not simplify this :)
         TypeSpec.Companion.classBuilder("${testInfo.name} tests")
-            .addFunction(
-                FunSpec.builder("$index").addAnnotation(
-                    ClassName(testAnnotationFqName.parent().asString(), testAnnotationFqName.shortName().asString())
-                ).addCode(testInfo.snippets.first().snippet)
-                    .returns(unitReturnType).build()
-            )
+            .addFunctionsFromSnippets(testAnnotationFqName, testInfo)
             .addModifiers(KModifier.PUBLIC)
             .let {
                 if (baseClassFqName == null)
                     it
                 else it.superclass(
-                    ClassName(
-                        baseClassFqName.parent().asString(),
-                        baseClassFqName.shortName().asString()
-                    )
+                    getClassNameFromFqName(baseClassFqName)
                 )
             }
             .build()
@@ -40,6 +52,12 @@ fun generateTestFile(
     val code = file.build().toString()
     return code.split("\n")
 }
+
+private fun getClassNameFromFqName(testAnnotationFqName: FqName) =
+    ClassName(
+        testAnnotationFqName.parent().asString(),
+        testAnnotationFqName.shortName().asString()
+    )
 
 private fun addImportsAndTypes(
     packageFqName: FqName,

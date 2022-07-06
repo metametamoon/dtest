@@ -14,14 +14,30 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import tree.comparer.Different
 import tree.comparer.TreeComparer
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.relativeTo
 import kotlin.random.Random
 
 class FunctionalTests {
+    @TestFactory
+    fun createTestsFromFolder(): List<DynamicTest> {
+        return File("functional-tests").listFiles().orEmpty().filterNotNull().map { file ->
+            generateFunctionalTest(file)
+        }
+    }
+
+    @Test
+    fun `single-file-with-many-tests-on-function`() {
+        File("functional-tests").resolve("single-file-with-many-tests-on-function").let { file ->
+            generateFunctionalTest(file).executable.execute()
+        }
+    }
+
     private val kotlinParserProject = run {
         val configuration = CompilerConfiguration()
         configuration.put(
@@ -44,52 +60,82 @@ class FunctionalTests {
         return (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
     }
 
-    @TestFactory
-    fun createTestsFromFolder(): List<DynamicTest> {
-        return File("functional-tests").listFiles().orEmpty().filterNotNull().map { file ->
-            generateFunctionalTest(file)
-        }
-    }
-
     private val treeComparer = TreeComparer()
+
+    data class GeneratedFile(
+        val file: File,
+        val relativePath: Path
+    )
 
     private fun generateFunctionalTest(testFolder: File): DynamicTest {
         val facade = DtestFileGenerator("kotlin.test.Test")
         return DynamicTest.dynamicTest(testFolder.name) {
-            val filesWithKtExtension = testFolder.resolve("kotlin-src").walkBottomUp()
-                .filter { it.isFile }
-                .filter { it.extension == "kt" }
-                .toList()
+            val sourceFiles = testFolder.resolve("kotlin-src").getFilesWithKtExtension()
             val genDirectory = createTemporaryDirectory()
-            filesWithKtExtension.forEach { file ->
+            sourceFiles.forEach { file ->
                 facade.generateTests(file, genDirectory)
             }
             val expectedFilesDirectory = testFolder.resolve("expected-gen")
-            val expectedFiles = expectedFilesDirectory.walkBottomUp().filter { it.isFile }.toList()
-            val relativePathsOfExpectedFiles =
-                expectedFiles.associateWith { it.toPath().relativeTo(expectedFilesDirectory.toPath()) }
+            val expectedFiles = expectedFilesDirectory.getFilesWithKtExtension()
             val expectedToGeneratedMapping =
-                relativePathsOfExpectedFiles.toList().associate { (generatedFile, relativePath) ->
-                    generatedFile to genDirectory.toPath().resolve(relativePath).toFile()
-                }
-            for ((expectedFile, generatedFile) in expectedToGeneratedMapping) {
-                val relativePath = expectedFile.relativeTo(expectedFilesDirectory).toPath()
-                require(!(!generatedFile.exists() || !generatedFile.isFile)) {
-                    "Expected file $relativePath to be generated, but it was not."
-                }
-                val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
-                val (actualKtFile, actualDocument) = createKtFile(generatedFile)
-                val comparisonResult = treeComparer.compare(expectedKtFile, actualKtFile)
-                if (comparisonResult is Different) {
-                    println(
-                        comparisonResult.toString(expectedFile, expectedDocument, generatedFile, actualDocument)
-                    )
-                    throw IllegalArgumentException("File $relativePath was improperly generated.")
-                }
+                getExpectedToGeneratedMapping(expectedFiles, expectedFilesDirectory, genDirectory)
+            compareExpectedFilesWithGenerated(expectedToGeneratedMapping)
+            checkAmountOfGeneratedFiles(expectedFiles, genDirectory)
+        }
+    }
+
+    private fun checkAmountOfGeneratedFiles(
+        expectedFiles: List<File>,
+        genDirectory: File,
+    ) {
+        val generatedFilesCount = genDirectory.getFilesWithKtExtension()
+            .toList().size
+        require(expectedFiles.size <= generatedFilesCount) {
+            "There are ${expectedFiles.size - generatedFilesCount} excessive files."
+        }
+    }
+
+    private fun File.getFilesWithKtExtension(): List<File> = walkBottomUp()
+        .filter { it.isFile }
+        .filter { it.extension == "kt" }
+        .toList()
+
+    private fun compareExpectedFilesWithGenerated(expectedToGeneratedMapping: Map<File, GeneratedFile>) {
+        for ((expectedFile, generatedFile) in expectedToGeneratedMapping) {
+            require(generatedFile.file.exists() && generatedFile.file.isFile) {
+                "Expected file ${generatedFile.relativePath} to be generated, but it was not."
             }
-            require(expectedFiles.size <= filesWithKtExtension.size) {
-                "There are ${expectedFiles.size - filesWithKtExtension.size} excessive files."
+            compareFiles(expectedFile, generatedFile.file, generatedFile.relativePath)
+        }
+    }
+
+    private fun getExpectedToGeneratedMapping(
+        expectedFiles: List<File>,
+        expectedFilesDirectory: File,
+        genDirectory: File
+    ): Map<File, GeneratedFile> {
+        val relativePathsOfExpectedFiles =
+            expectedFiles.associateWith { it.toPath().relativeTo(expectedFilesDirectory.toPath()) }
+        val expectedToGeneratedMapping =
+            relativePathsOfExpectedFiles.toList().associate { (generatedFile, relativePath) ->
+                generatedFile to GeneratedFile(genDirectory.toPath().resolve(relativePath).toFile(), relativePath)
             }
+        return expectedToGeneratedMapping
+    }
+
+    private fun compareFiles(
+        expectedFile: File,
+        generatedFile: File,
+        relativePathForExceptionMessage: Path
+    ) {
+        val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
+        val (actualKtFile, actualDocument) = createKtFile(generatedFile)
+        val comparisonResult = treeComparer.compare(expectedKtFile, actualKtFile)
+        if (comparisonResult is Different) {
+            println(
+                comparisonResult.toString(expectedFile, expectedDocument, generatedFile, actualDocument)
+            )
+            throw IllegalArgumentException("File $relativePathForExceptionMessage was improperly generated.")
         }
     }
 
