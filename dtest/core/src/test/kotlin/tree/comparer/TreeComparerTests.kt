@@ -40,9 +40,9 @@ class TreeComparerTests {
     }
 
     private fun compareFilesInFolder(folder: File): TreeComparingResult {
-        val (expectedFile, expectedDocument) = createKtFile(folder.resolve("expected.kt"))
-        val (actualFile, actualDocument) = createKtFile(folder.resolve("actual.kt"))
-        return TreeComparer(expectedDocument, actualDocument).compare(expectedFile, actualFile)
+        val (expectedFile, _) = createKtFile(folder.resolve("expected.kt"))
+        val (actualFile, _) = createKtFile(folder.resolve("actual.kt"))
+        return TreeComparer().compare(expectedFile, actualFile)
     }
 
     private val treeComparingDirectory = File("tree-comparing")
@@ -105,9 +105,9 @@ class TreeComparerTests {
         val actualFile = folder.resolve("actual.kt")
         val (actualKtFile, actualDocument) = createKtFile(actualFile)
 
-        val comparisonResult = TreeComparer(expectedDocument, actualDocument).compare(expectedKtFile, actualKtFile)
+        val comparisonResult = TreeComparer().compare(expectedKtFile, actualKtFile)
         if (comparisonResult is Different) {
-            println(comparisonResult.toString(expectedFile, actualFile))
+            println(comparisonResult.toString(expectedFile, expectedDocument, actualFile, actualDocument))
         }
         assertFalse(comparisonResult.areSame())
     }

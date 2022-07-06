@@ -1,6 +1,5 @@
 package tree.comparer
 
-import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -23,15 +22,7 @@ private val PsiElement.childrenNoWhitespaces: List<PsiElement>
     }
 
 
-class TreeComparer(private val expectedDocument: Document, private val actualDocument: Document) {
-    private fun PsiElement.getPosition(document: Document): PsiPosition {
-        val lineNumber = document.getLineNumber(textOffset)
-        return PsiPosition(
-            lineNumber,
-            textOffset - document.getLineStartOffset(lineNumber)
-        )
-    }
-
+class TreeComparer {
     fun compare(expected: PsiElement, actual: PsiElement): TreeComparingResult {
         return when (expected) {
             is LeafPsiElement -> compareLeafElements(expected, actual)
@@ -51,8 +42,8 @@ class TreeComparer(private val expectedDocument: Document, private val actualDoc
             Different("Different leaves element", listOf()).wrapIn(
                 DifferenceStackElement(
                     "While comparing leaves elements",
-                    expected.getPosition(expectedDocument),
-                    actual.getPosition(actualDocument)
+                    expected.textOffset,
+                    actual.textOffset
                 )
             )
         }
@@ -68,8 +59,8 @@ class TreeComparer(private val expectedDocument: Document, private val actualDoc
         }.wrapIn(
             DifferenceStackElement(
                 "While comparing KtFiles",
-                expected.getPosition(expectedDocument),
-                actual.getPosition(actualDocument)
+                expected.textOffset,
+                actual.textOffset
             )
         )
     }
@@ -110,8 +101,8 @@ class TreeComparer(private val expectedDocument: Document, private val actualDoc
         }.wrapIn(
             DifferenceStackElement(
                 "When comparing KtNamedFunctions",
-                expected.getPosition(expectedDocument),
-                actual.getPosition(actualDocument)
+                expected.textOffset,
+                actual.textOffset
             )
         )
     }
@@ -143,8 +134,8 @@ class TreeComparer(private val expectedDocument: Document, private val actualDoc
         return compareChildren(expected.childrenNoWhitespaces, actual.childrenNoWhitespaces).wrapIn(
             DifferenceStackElement(
                 "While comparing PsiElements",
-                expected.getPosition(expectedDocument),
-                actual.getPosition(actualDocument)
+                expected.textOffset,
+                actual.textOffset
             )
         )
     }

@@ -13,7 +13,6 @@
     <inspection_tool class="ConstantConditionIf" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertArgumentToSet" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertCallChainIntoSequence" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ConvertLambdaToReference" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertPairConstructorToToFunction" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertToStringTemplate" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertTryFinallyToUseCall" enabled="true" level="WARNING" enabled_by_default="true" />
