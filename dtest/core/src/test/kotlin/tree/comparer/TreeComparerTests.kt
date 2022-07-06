@@ -1,5 +1,7 @@
 package tree.comparer
 
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
@@ -11,7 +13,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -30,18 +31,18 @@ class TreeComparerTests {
 
     private fun createKtFile(
         file: File
-    ): KtFile {
+    ): Pair<KtFile, Document> {
         val codeString = file.readLines().joinToString("\n")
         val fileName = file.name
-        return PsiManager.getInstance(kotlinParserProject).findFile(
-            LightVirtualFile(fileName, KotlinFileType.INSTANCE, codeString)
-        ) as KtFile
+        val lightVirtualFile = LightVirtualFile(fileName, KotlinFileType.INSTANCE, codeString)
+        val document = FileDocumentManager.getInstance().getDocument(lightVirtualFile)!!
+        return (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
     }
 
-    private fun compareFilesInFolder(folder: File): Boolean {
-        val expectedFile = createKtFile(folder.resolve("expected.kt"))
-        val actualFile = createKtFile(folder.resolve("actual.kt"))
-        return TreeComparer().compare(expectedFile, actualFile)
+    private fun compareFilesInFolder(folder: File): TreeComparingResult {
+        val (expectedFile, expectedDocument) = createKtFile(folder.resolve("expected.kt"))
+        val (actualFile, actualDocument) = createKtFile(folder.resolve("actual.kt"))
+        return TreeComparer(expectedDocument, actualDocument).compare(expectedFile, actualFile)
     }
 
     private val treeComparingDirectory = File("tree-comparing")
@@ -97,10 +98,24 @@ class TreeComparerTests {
     }
 
     private fun checkComparedDifferent(subfolderName: String) {
-        assertFalse(compareFilesInFolder(treeComparingDirectory.resolve(subfolderName)))
+        val folder = treeComparingDirectory.resolve(subfolderName)
+        val expectedFile = folder.resolve("expected.kt")
+        val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
+
+        val actualFile = folder.resolve("actual.kt")
+        val (actualKtFile, actualDocument) = createKtFile(actualFile)
+
+        val comparisonResult = TreeComparer(expectedDocument, actualDocument).compare(expectedKtFile, actualKtFile)
+        if (comparisonResult is Different) {
+            println(comparisonResult.toString(expectedFile, actualFile))
+        }
+        assertFalse(comparisonResult.areSame())
     }
 
     private fun checkComparedSame(subfolderName: String) {
-        assertTrue(compareFilesInFolder(treeComparingDirectory.resolve(subfolderName)))
+        val comparisonResult = compareFilesInFolder(treeComparingDirectory.resolve(subfolderName))
+        if (!comparisonResult.areSame()) {
+            throw AssertionError("Expected files to be same, but they are not:\n $comparisonResult")
+        }
     }
 }
