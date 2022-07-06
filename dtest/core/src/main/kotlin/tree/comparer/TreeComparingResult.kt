@@ -48,13 +48,13 @@ data class Different(val reason: String, val trace: List<DifferenceStackElement>
             result.appendLine(differenceStackElement.comparingMessage)
             result.append(doubleIndent)
             result.appendLine(
-                "Expected: ${expectedFile.absolutePath}:${
+                "Expected: ${expectedFile.canonicalPath}:${
                     stringify(differenceStackElement.expectedFilePsiOffset, expectedDocument)
                 }"
             )
             result.append(doubleIndent)
             result.appendLine(
-                "Actual: ${actualFile.absolutePath}:${
+                "Actual: ${actualFile.canonicalPath}:${
                     stringify(differenceStackElement.actualFilePsiOffset, actualDocument)
                 }"
             )

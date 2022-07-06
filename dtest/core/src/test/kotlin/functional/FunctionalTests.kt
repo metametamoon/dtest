@@ -18,8 +18,8 @@ import org.junit.jupiter.api.TestFactory
 import tree.comparer.Different
 import tree.comparer.TreeComparer
 import java.io.File
-import kotlin.io.path.createTempDirectory
 import kotlin.io.path.relativeTo
+import kotlin.random.Random
 
 class FunctionalTests {
     private val kotlinParserProject = run {
@@ -60,7 +60,7 @@ class FunctionalTests {
                 .filter { it.isFile }
                 .filter { it.extension == "kt" }
                 .toList()
-            val genDirectory = createTempDirectory("").toFile()
+            val genDirectory = createTemporaryDirectory()
             filesWithKtExtension.forEach { file ->
                 facade.generateTests(file, genDirectory)
             }
@@ -89,6 +89,18 @@ class FunctionalTests {
             }
             require(expectedFiles.size <= filesWithKtExtension.size) {
                 "There are ${expectedFiles.size - filesWithKtExtension.size} excessive files."
+            }
+        }
+    }
+
+    private fun createTemporaryDirectory(): File {
+        while (true) {
+            val rnd = Random.Default
+            val name = rnd.nextInt(100_000, 999_999).toString()
+            val file = File("tmp").resolve(name)
+            if (!file.exists()) {
+                file.mkdirs()
+                return file
             }
         }
     }
