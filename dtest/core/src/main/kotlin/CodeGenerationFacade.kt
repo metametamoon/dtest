@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import util.DtestSettings
 import java.io.File
 
-
+/**
+ * Tests from a single test unit belong to the same class.
+ */
 data class TestUnit(
     val testedObjectName: String, val testSnippets: List<CodeSnippet>
 )
@@ -94,6 +96,9 @@ class DtestFileGenerator(
             val snippets =
                 MarkdownSnippetExtractor().extractCodeSnippets(documentation.asText())
             TestUnit(name, snippets)
-        }.filter { testInfo -> testInfo.testSnippets.isNotEmpty() } // skip the components without test blocks
+        }.skipTestUnitsWithoutSnippets()
+
+    private fun List<TestUnit>.skipTestUnitsWithoutSnippets() =
+        filter { testUnit -> testUnit.testSnippets.isNotEmpty() }
 }
 

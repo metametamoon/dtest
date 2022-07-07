@@ -1,23 +1,23 @@
-package tree.comparer
+package tree.comparator
 
 import com.intellij.openapi.editor.Document
 import java.io.File
 
 data class DifferenceStackElement(
-    val comparingMessage: String,
+    val comparisonMessage: String,
     val expectedFilePsiOffset: Int,
     val actualFilePsiOffset: Int
 )
 
 
-sealed interface TreeComparingResult {
+sealed interface TreeComparisonResult {
     fun areSame(): Boolean
     fun wrapIn(
         differenceStackElement: DifferenceStackElement
-    ): TreeComparingResult
+    ): TreeComparisonResult
 }
 
-object Same : TreeComparingResult {
+object Same : TreeComparisonResult {
     override fun areSame(): Boolean = true
 
     override fun wrapIn(
@@ -27,10 +27,10 @@ object Same : TreeComparingResult {
     override fun toString(): String = "Same"
 }
 
-data class Different(val reason: String, val trace: List<DifferenceStackElement> = emptyList()) : TreeComparingResult {
+data class Different(val reason: String, val trace: List<DifferenceStackElement> = emptyList()) : TreeComparisonResult {
     override fun areSame(): Boolean = false
 
-    override fun wrapIn(differenceStackElement: DifferenceStackElement): TreeComparingResult =
+    override fun wrapIn(differenceStackElement: DifferenceStackElement): TreeComparisonResult =
         Different(reason, trace + listOf(differenceStackElement))
 
     fun toString(
@@ -45,7 +45,7 @@ data class Different(val reason: String, val trace: List<DifferenceStackElement>
         result.appendLine(reason)
         for (differenceStackElement in trace) {
             result.append(indent)
-            result.appendLine(differenceStackElement.comparingMessage)
+            result.appendLine(differenceStackElement.comparisonMessage)
             result.append(doubleIndent)
             result.appendLine(
                 "Expected: ${expectedFile.canonicalPath}:${

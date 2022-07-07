@@ -36,9 +36,9 @@ fun generateTestFile(
 ): List<String> {
     val defaultTestAnnotationFqName = settings.defaultTestAnnotationFqName
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
-    val classes = testUnits.mapIndexed { index, testInfo ->
-        TypeSpec.Companion.classBuilder("${testInfo.testedObjectName} tests")
-            .addFunctionsFromSnippets(testAnnotationFqName, testInfo)
+    val classes = testUnits.map { testUnit ->
+        TypeSpec.Companion.classBuilder("${testUnit.testedObjectName} tests")
+            .addFunctionsFromSnippets(testAnnotationFqName, testUnit)
             .addModifiers(KModifier.PUBLIC)
             .let {
                 if (baseClassFqName == null)

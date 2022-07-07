@@ -1,4 +1,4 @@
-package tree.comparer
+package tree.comparator
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -23,8 +23,8 @@ private val PsiElement.childrenNoWhitespaces: List<PsiElement>
     }
 
 
-class TreeComparer {
-    fun compare(expected: PsiElement, actual: PsiElement): TreeComparingResult {
+class TreeComparator {
+    fun compare(expected: PsiElement, actual: PsiElement): TreeComparisonResult {
         return when (expected) {
             is LeafPsiElement -> compareLeafElements(expected, actual)
             is KtFile -> compareKtFiles(expected, actual)
@@ -39,7 +39,7 @@ class TreeComparer {
         segments.size == 2 && segments.first().asString() == "kotlin"
     }
 
-    private fun compareImportLists(expected: KtImportList, actual: PsiElement): TreeComparingResult {
+    private fun compareImportLists(expected: KtImportList, actual: PsiElement): TreeComparisonResult {
         return (if (actual !is KtImportList) {
             Different("Actual is not KtImportList")
         } else {
@@ -63,7 +63,7 @@ class TreeComparer {
     private fun compareLeafElements(
         expected: LeafPsiElement,
         actual: PsiElement
-    ): TreeComparingResult {
+    ): TreeComparisonResult {
         return if (actual is LeafPsiElement && expected.text == actual.text) {
             Same
         } else {
@@ -77,7 +77,7 @@ class TreeComparer {
         }
     }
 
-    private fun compareKtFiles(expected: PsiElement, actual: PsiElement): TreeComparingResult {
+    private fun compareKtFiles(expected: PsiElement, actual: PsiElement): TreeComparisonResult {
         return if (actual !is KtFile) {
             Different("Actual is not KtFile")
         } else {
@@ -96,7 +96,7 @@ class TreeComparer {
     private fun compareChildren(
         expectedChildren: List<PsiElement>,
         actualChildren: List<PsiElement>
-    ): TreeComparingResult {
+    ): TreeComparisonResult {
         return if (expectedChildren.size != actualChildren.size)
             Different("Different number of children")
         else
@@ -108,7 +108,7 @@ class TreeComparer {
     private fun compareFunctions(
         expected: KtNamedFunction,
         actual: PsiElement
-    ): TreeComparingResult {
+    ): TreeComparisonResult {
         return if (actual !is KtNamedFunction) {
             Different("Other is not KtNamedFunction")
         } else {
@@ -138,7 +138,7 @@ class TreeComparer {
     private fun compareModifierLists(
         expected: KtNamedFunction,
         actual: PsiElement
-    ): TreeComparingResult {
+    ): TreeComparisonResult {
         val expectedKtModifierListChildren =
             expected.childrenNoWhitespaces.firstIsInstanceOrNull<KtModifierList>()
                 ?.childrenNoWhitespaces
@@ -158,7 +158,7 @@ class TreeComparer {
         )
     }
 
-    private fun compareDefault(expected: PsiElement, actual: PsiElement): TreeComparingResult {
+    private fun compareDefault(expected: PsiElement, actual: PsiElement): TreeComparisonResult {
         return compareChildren(expected.childrenNoWhitespaces, actual.childrenNoWhitespaces).wrapIn(
             DifferenceStackElement(
                 "While comparing PsiElements",

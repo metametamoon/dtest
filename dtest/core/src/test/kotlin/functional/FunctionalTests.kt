@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import tree.comparer.Different
-import tree.comparer.TreeComparer
+import tree.comparator.Different
+import tree.comparator.TreeComparator
 import util.DtestSettings
 import java.io.File
 import java.nio.file.Path
@@ -61,7 +61,7 @@ class FunctionalTests {
         return (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
     }
 
-    private val treeComparer = TreeComparer()
+    private val treeComparator = TreeComparator()
 
     data class GeneratedFile(
         val file: File,
@@ -134,7 +134,7 @@ class FunctionalTests {
     ) {
         val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
         val (actualKtFile, actualDocument) = createKtFile(generatedFile)
-        val comparisonResult = treeComparer.compare(expectedKtFile, actualKtFile)
+        val comparisonResult = treeComparator.compare(expectedKtFile, actualKtFile)
         if (comparisonResult is Different) {
             println(
                 comparisonResult.toString(expectedFile, expectedDocument, generatedFile, actualDocument)
