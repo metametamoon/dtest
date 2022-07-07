@@ -1,6 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.6.20"
     `maven-publish`
 }
 
@@ -17,6 +18,7 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.14")
     implementation("com.squareup:kotlinpoet:1.10.2")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.20")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")

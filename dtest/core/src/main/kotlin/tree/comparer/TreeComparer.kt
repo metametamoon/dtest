@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -28,8 +29,35 @@ class TreeComparer {
             is LeafPsiElement -> compareLeafElements(expected, actual)
             is KtFile -> compareKtFiles(expected, actual)
             is KtNamedFunction -> compareFunctions(expected, actual)
+            is KtImportList -> compareImportLists(expected, actual)
             else -> compareDefault(expected, actual)
         }
+    }
+
+    private fun List<FqName>.excludeKotlinDefaultInclusion(): List<FqName> = filterNot {
+        val segments = it.pathSegments()
+        segments.size == 2 && segments.first().asString() == "kotlin"
+    }
+
+    private fun compareImportLists(expected: KtImportList, actual: PsiElement): TreeComparingResult {
+        return (if (actual !is KtImportList) {
+            Different("Actual is not KtImportList")
+        } else {
+            val expectedImports = expected.imports.map {
+                it.importedFqName
+                    ?: throw IllegalArgumentException("Not an import in import list, probably parsing error")
+            }.excludeKotlinDefaultInclusion().map { it.asString() }.toSet()
+
+            val actualImports = actual.imports.map {
+                it.importedFqName
+                    ?: throw IllegalArgumentException("Not an import in import list, probably parsing error")
+            }.excludeKotlinDefaultInclusion().map { it.asString() }.toSet()
+            if (expectedImports != actualImports) {
+                Different("Imports are not identical (ignoring order)")
+            } else {
+                Same
+            }
+        }).wrapIn(DifferenceStackElement("While comparing KtImportLists", expected.textOffset, actual.textOffset))
     }
 
     private fun compareLeafElements(
@@ -53,8 +81,8 @@ class TreeComparer {
         return if (actual !is KtFile) {
             Different("Actual is not KtFile")
         } else {
-            val expectedChildren = expected.childrenNoWhitespaces.filter { it !is KtImportList }
-            val actualChildren = actual.childrenNoWhitespaces.filter { it !is KtImportList }
+            val expectedChildren = expected.childrenNoWhitespaces
+            val actualChildren = actual.childrenNoWhitespaces
             compareChildren(expectedChildren, actualChildren)
         }.wrapIn(
             DifferenceStackElement(

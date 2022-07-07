@@ -12,6 +12,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import util.DtestSettings
 import kotlin.io.path.Path
 import kotlin.io.path.relativeToOrNull
 
@@ -28,7 +29,7 @@ abstract class DtestGenerateTask : DefaultTask() {
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        val facade = DtestFileGenerator(defaultTestAnnotationFqName.get())
+        val facade = DtestFileGenerator(DtestSettings(defaultTestAnnotationFqName = defaultTestAnnotationFqName.get()))
         inputChanges.getFileChanges(directoryWithKotlinSource)
             .filter { it.fileType == FileType.FILE }
             .filter { it.file.extension == "kt" }

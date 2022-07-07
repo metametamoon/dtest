@@ -88,13 +88,13 @@ class TreeComparerTests {
     }
 
     @Test
-    fun `different imports should not matter`() {
-        checkComparedSame("different-imports")
+    fun `different imports should matter`() {
+        checkComparedDifferent("different-imports")
     }
 
     @Test
-    fun `additional imports are not bad`() {
-        checkComparedSame("expected-without-imports")
+    fun `additional imports are bad`() {
+        checkComparedDifferent("expected-without-imports")
     }
 
     private fun checkComparedDifferent(subfolderName: String) {

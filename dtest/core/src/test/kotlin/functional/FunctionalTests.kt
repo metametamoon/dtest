@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import tree.comparer.Different
 import tree.comparer.TreeComparer
+import util.DtestSettings
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.relativeTo
@@ -68,10 +69,13 @@ class FunctionalTests {
     )
 
     private fun generateFunctionalTest(testFolder: File): DynamicTest {
-        val facade = DtestFileGenerator("kotlin.test.Test")
+        val settings = DtestSettings.readFromFile(testFolder.resolve("settings.json"))
+            ?: DtestSettings(defaultTestAnnotationFqName = "kotlin.test.Test")
+        val facade = DtestFileGenerator(settings)
         return DynamicTest.dynamicTest(testFolder.name) {
             val sourceFiles = testFolder.resolve("kotlin-src").getFilesWithKtExtension()
             val genDirectory = createTemporaryDirectory()
+            println("Generation folder for test ${testFolder.name} is ${genDirectory.name}")
             sourceFiles.forEach { file ->
                 facade.generateTests(file, genDirectory)
             }

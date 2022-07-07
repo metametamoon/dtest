@@ -1,17 +1,17 @@
 package generation
 
-import TestInfo
+import TestUnit
 import com.squareup.kotlinpoet.*
-import docs_to_tests.snippets.CodeSnippet
 import org.jetbrains.kotlin.name.FqName
+import util.DtestSettings
 
 private fun TypeSpec.Builder.addFunctionsFromSnippets(
     testAnnotationFqName: FqName,
-    testInfo: TestInfo
+    testUnit: TestUnit
 ): TypeSpec.Builder {
     val unitReturnType = protectedFromShadowingKotlinUnitType()
     var builder = this
-    for ((index, snippet) in testInfo.snippets.withIndex()) {
+    for ((index, snippet) in testUnit.testSnippets.withIndex()) {
         builder = builder.addFunction(
             FunSpec.builder(index.toString()).addAnnotation(
                 getClassNameFromFqName(testAnnotationFqName)
@@ -28,14 +28,16 @@ private fun protectedFromShadowingKotlinUnitType(): ClassName {
 }
 
 fun generateTestFile(
-    testInfos: List<TestInfo>,
+    testUnits: List<TestUnit>,
     packageFqName: FqName,
-    defaultTestAnnotationFqName: String,
+    settings: DtestSettings,
     baseClassFqName: FqName? = null,
+    fileName: String,
 ): List<String> {
+    val defaultTestAnnotationFqName = settings.defaultTestAnnotationFqName
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
-    val classes = testInfos.mapIndexed { index, testInfo ->
-        TypeSpec.Companion.classBuilder("${testInfo.name} tests")
+    val classes = testUnits.mapIndexed { index, testInfo ->
+        TypeSpec.Companion.classBuilder("${testInfo.testedObjectName} tests")
             .addFunctionsFromSnippets(testAnnotationFqName, testInfo)
             .addModifiers(KModifier.PUBLIC)
             .let {
@@ -47,7 +49,13 @@ fun generateTestFile(
             }
             .build()
     }
-    val file = addImportsAndTypes(packageFqName, classes, testInfos, testAnnotationFqName)
+    val file = addImportsAndTypes(
+        packageFqName,
+        classes,
+        testAnnotationFqName,
+        settings,
+        fileName
+    )
 
     val code = file.build().toString()
     return code.split("\n")
@@ -62,18 +70,14 @@ private fun getClassNameFromFqName(testAnnotationFqName: FqName) =
 private fun addImportsAndTypes(
     packageFqName: FqName,
     classes: List<TypeSpec>,
-    testInfos: List<TestInfo>,
-    testAnnotationFqName: FqName
+    testAnnotationFqName: FqName,
+    settings: DtestSettings,
+    fileName: String
 ): FileSpec.Builder {
-    val imports = testInfos.flatMap(TestInfo::snippets)
-        .mapNotNull(CodeSnippet::importsSnippet)
-        .flatMap { importSnippet ->
-            val importRegex = "import (?<import>.*)".toRegex()
-            importRegex.findAll(importSnippet).map { match -> match.groups["import"]?.value }
-        }
-        .filterNotNull()
-        .map(::FqName) + listOf(testAnnotationFqName)
-
+    val fileFqName = FqName.fromSegments(
+        packageFqName.pathSegments().map { "$it" } + fileName
+    )
+    val imports = settings.imports[fileFqName.asString()].orEmpty().map(::FqName) + testAnnotationFqName
     var file = FileSpec.builder(packageFqName.asString(), "A")
     for (import in imports)
         file = file.addImport(import.parent().asString(), import.shortName().asString())

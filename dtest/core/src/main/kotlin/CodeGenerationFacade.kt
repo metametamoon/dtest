@@ -18,17 +18,20 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import util.DtestSettings
 import java.io.File
 
 
-data class TestInfo(
-    val name: String, val snippets: List<CodeSnippet>
+data class TestUnit(
+    val testedObjectName: String, val testSnippets: List<CodeSnippet>
 )
 
 /**
  *  Is a facade for working with source files and generated files.
  */
-class DtestFileGenerator(private val defaultTestAnnotationFqName: String) {
+class DtestFileGenerator(
+    private val settings: DtestSettings = DtestSettings()
+) {
     fun generateTests(file: File, generatedFilesFolder: File) {
         val ktFile = createKtFile(file, globalKotlinParserOnlyProject)
         generateTests(ktFile, generatedFilesFolder)
@@ -37,12 +40,12 @@ class DtestFileGenerator(private val defaultTestAnnotationFqName: String) {
     private fun generateTests(ktFile: KtFile, generatedFilesFolder: File) {
         setIdeaIoUseFallback()
         val extractedDocs: ExtractedDocs = extractDocs(ktFile).value
-        val testInfos = extractTestInfos(extractedDocs)
+        val testUnits = extractTestUnits(extractedDocs)
         val packageFqName = ktFile.packageFqName
         val extractedBaseTestClass = extractBaseTestClass(ktFile)
-        if (testInfos.isNotEmpty()) {
+        if (testUnits.isNotEmpty()) {
             val fileGenerated =
-                generateTestFile(testInfos, packageFqName, defaultTestAnnotationFqName, extractedBaseTestClass)
+                generateTestFile(testUnits, packageFqName, settings, extractedBaseTestClass, ktFile.name)
             val folderForGeneratedFile: File = findCorrespondingFolder(generatedFilesFolder, packageFqName)
             placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
         }
@@ -85,12 +88,12 @@ class DtestFileGenerator(private val defaultTestAnnotationFqName: String) {
         return segments.fold(root) { file, nextSegment -> file.resolve(nextSegment.asString()) }
     }
 
-    private fun extractTestInfos(extractedDocs: ExtractedDocs) =
+    private fun extractTestUnits(extractedDocs: ExtractedDocs) =
         extractedDocs.documentations.map { (element, documentation) ->
             val name = element.name ?: "unnamed"
             val snippets =
                 MarkdownSnippetExtractor().extractCodeSnippets(documentation.asText())
-            TestInfo(name, snippets)
-        }.filter { testInfo -> testInfo.snippets.isNotEmpty() } // skip the components without test blocks
+            TestUnit(name, snippets)
+        }.filter { testInfo -> testInfo.testSnippets.isNotEmpty() } // skip the components without test blocks
 }
 
