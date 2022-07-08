@@ -1,9 +1,9 @@
-package generation
+package com.github.metametamoon.generation
 
-import TestUnit
+import com.github.metametamoon.TestUnit
+import com.github.metametamoon.util.DtestSettings
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.name.FqName
-import util.DtestSettings
 
 private fun TypeSpec.Builder.addFunctionsFromSnippets(
     testAnnotationFqName: FqName,

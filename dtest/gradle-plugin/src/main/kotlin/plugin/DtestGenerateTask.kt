@@ -1,6 +1,7 @@
 package plugin
 
-import DtestFileGenerator
+import com.github.metametamoon.DtestFileGenerator
+import com.github.metametamoon.util.DtestSettings
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileType
@@ -12,7 +13,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import util.DtestSettings
 import kotlin.io.path.Path
 import kotlin.io.path.relativeToOrNull
 

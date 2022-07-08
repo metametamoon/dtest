@@ -1,6 +1,6 @@
-package docs_to_tests.snippets
+package com.github.metametamoon.extraction.snippets
 
-import util.trimDocs
+import com.github.metametamoon.util.trimDocs
 
 data class CodeSnippet(
     val snippet: String,

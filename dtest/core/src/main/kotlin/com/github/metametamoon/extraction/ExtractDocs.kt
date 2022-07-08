@@ -1,4 +1,4 @@
-package extractor
+package com.github.metametamoon.extraction
 
 import com.github.michaelbull.result.Ok
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc

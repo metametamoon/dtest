@@ -1,6 +1,9 @@
-package functional
+package com.github.metametamoon.functional
 
-import DtestFileGenerator
+import com.github.metametamoon.DtestFileGenerator
+import com.github.metametamoon.tree.comparator.Different
+import com.github.metametamoon.tree.comparator.TreeComparator
+import com.github.metametamoon.util.DtestSettings
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Disposer
@@ -16,9 +19,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import tree.comparator.Different
-import tree.comparator.TreeComparator
-import util.DtestSettings
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.relativeTo

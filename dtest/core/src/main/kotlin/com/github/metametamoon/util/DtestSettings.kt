@@ -1,4 +1,4 @@
-package util
+package com.github.metametamoon.util
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable

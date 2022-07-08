@@ -1,4 +1,4 @@
-package extractor
+package com.github.metametamoon.extraction
 
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.name.FqName

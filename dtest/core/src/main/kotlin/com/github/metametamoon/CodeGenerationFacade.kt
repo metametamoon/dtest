@@ -1,14 +1,17 @@
+package com.github.metametamoon
+
+import com.github.metametamoon.extraction.ExtractedDocs
+import com.github.metametamoon.extraction.extractBaseTestClass
+import com.github.metametamoon.extraction.extractDocs
+import com.github.metametamoon.extraction.snippets.CodeSnippet
+import com.github.metametamoon.extraction.snippets.MarkdownSnippetExtractor
+import com.github.metametamoon.extraction.snippets.asText
+import com.github.metametamoon.generation.generateTestFile
+import com.github.metametamoon.util.DtestSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import docs_to_tests.snippets.CodeSnippet
-import docs_to_tests.snippets.MarkdownSnippetExtractor
-import docs_to_tests.snippets.asText
-import extractor.ExtractedDocs
-import extractor.extractBaseTestClass
-import extractor.extractDocs
-import generation.generateTestFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -18,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import util.DtestSettings
 import java.io.File
 
 /**

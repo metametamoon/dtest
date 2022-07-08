@@ -1,5 +1,8 @@
-package tree.comparator
+package com.github.metametamoon.comparator
 
+import com.github.metametamoon.tree.comparator.Different
+import com.github.metametamoon.tree.comparator.TreeComparator
+import com.github.metametamoon.tree.comparator.TreeComparisonResult
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Disposer

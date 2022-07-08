@@ -1,4 +1,4 @@
-package tree.comparator
+package com.github.metametamoon.tree.comparator
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace

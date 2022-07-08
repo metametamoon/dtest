@@ -1,4 +1,4 @@
-package docs_to_tests.snippets
+package com.github.metametamoon.extraction.snippets
 
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 

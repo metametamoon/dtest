@@ -1,4 +1,4 @@
-package docs_to_tests.snippets
+package com.github.metametamoon.extraction.snippets
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
