@@ -33,8 +33,8 @@ class FunctionalTests {
     }
 
     @Test
-    fun `single-file-with-many-tests-on-function`() {
-        File("functional-tests").resolve("single-file-with-many-tests-on-function").let { file ->
+    fun `multiple-files-within-packages`() {
+        File("functional-tests").resolve("multiple-files-within-packages").let { file ->
             generateFunctionalTest(file).executable.execute()
         }
     }

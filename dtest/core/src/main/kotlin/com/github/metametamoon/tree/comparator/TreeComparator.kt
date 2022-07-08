@@ -30,8 +30,28 @@ class TreeComparator {
             is KtFile -> compareKtFiles(expected, actual)
             is KtNamedFunction -> compareFunctions(expected, actual)
             is KtImportList -> compareImportLists(expected, actual)
+            is KtClass -> compareKtClasses(expected, actual)
             else -> compareDefault(expected, actual)
         }
+    }
+
+    private fun compareKtClasses(expected: KtClass, actual: PsiElement): TreeComparisonResult {
+        return (if (actual !is KtClass) {
+            Different("Expected KtClass")
+        } else {
+            val comparedModifiers = compareModifierLists(expected, actual)
+            if (comparedModifiers is Different) {
+                comparedModifiers
+            } else {
+                val expectedChildren = expected.childrenNoWhitespaces.filterNot {
+                    it is KtModifierList
+                }.filterNot { it is KtPrimaryConstructor && it.valueParameters.isEmpty() }
+                val actualChildren = actual.childrenNoWhitespaces.filterNot {
+                    it is KtModifierList
+                }.filterNot { it is KtPrimaryConstructor && it.valueParameters.isEmpty() }
+                compareChildren(expectedChildren, actualChildren)
+            }
+        }).wrapIn(DifferenceStackElement("While comparing KtClasses", expected.textOffset, actual.textOffset))
     }
 
     private fun List<FqName>.excludeKotlinDefaultInclusion(): List<FqName> = filterNot {
@@ -136,7 +156,7 @@ class TreeComparator {
     }
 
     private fun compareModifierLists(
-        expected: KtNamedFunction,
+        expected: PsiElement,
         actual: PsiElement
     ): TreeComparisonResult {
         val expectedKtModifierListChildren =

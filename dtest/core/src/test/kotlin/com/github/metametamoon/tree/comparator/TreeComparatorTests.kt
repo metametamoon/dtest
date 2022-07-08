@@ -1,8 +1,5 @@
-package com.github.metametamoon.comparator
+package com.github.metametamoon.tree.comparator
 
-import com.github.metametamoon.tree.comparator.Different
-import com.github.metametamoon.tree.comparator.TreeComparator
-import com.github.metametamoon.tree.comparator.TreeComparisonResult
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Disposer
@@ -98,6 +95,11 @@ class TreeComparatorTests {
     @Test
     fun `additional imports are bad`() {
         checkComparedDifferent("expected-without-imports")
+    }
+
+    @Test
+    fun `class comparison ignores public modifiers and empty primary ctor`() {
+        checkComparedSame("class-comparison")
     }
 
     private fun checkComparedDifferent(subfolderName: String) {
