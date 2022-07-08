@@ -1,11 +1,9 @@
-This is a prototype for running tests from documentation. The test in [EvalTest.kt](dtest/src/test/kotlin/EvalTest.kt)
-runs the documentation tests in [Sum.kt](dtest/src/main/kotlin/Sum.kt) (the last test fails on purpose).
-
-Currently, each kdoc line that starts with ``>>>`` marks an assertion that will be executed as a separate test.
-Only ```assertEquals``` method is currently supported for assertions.
-
-
-Todo: 
-- Produce more relevant information on test failure (file and line number, maybe the failed expression itself).
-- Support functions not in global scope (currently it cannot be used to call functions from packages).
-- Make stack trace nicer.
+The current state of the project:
+- Gradle plugin support is delayed for the time being, the probable solution
+for the linking problem is to build the library for different kotlin plugin versions.
+- "core" project now contains functional tests that demonstrate the functionality of the code generation
+utility
+- Added settings.json file which contains the settings for the dtest, such as: imports, parent classes,
+test annotation
+- Added a utility component to compare trees ignoring most commonly occurred insignificant differences:
+whitespaces, public modifiers, Unit return type, imports ordering, empty primary constructors
