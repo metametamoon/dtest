@@ -8,11 +8,14 @@ import java.io.File
 
 typealias ImportEntry = String
 typealias FqFileName = String
+typealias FqPackageOrClassName = String
+typealias FqParentName = String
 
 @Serializable
 data class DtestSettings(
     val imports: Map<FqFileName, List<ImportEntry>> = emptyMap(),
-    val defaultTestAnnotationFqName: String = "kotlin.test.Test"
+    val defaultTestAnnotationFqName: String = "kotlin.test.Test",
+    val classParents: Map<FqPackageOrClassName, FqParentName> = mapOf()
 ) {
     companion object {
         @OptIn(ExperimentalSerializationApi::class)

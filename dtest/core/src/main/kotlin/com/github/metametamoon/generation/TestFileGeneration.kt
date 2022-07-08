@@ -4,6 +4,7 @@ import com.github.metametamoon.TestUnit
 import com.github.metametamoon.util.DtestSettings
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 private fun TypeSpec.Builder.addFunctionsFromSnippets(
     testAnnotationFqName: FqName,
@@ -14,7 +15,7 @@ private fun TypeSpec.Builder.addFunctionsFromSnippets(
     for ((index, snippet) in testUnit.testSnippets.withIndex()) {
         builder = builder.addFunction(
             FunSpec.builder(index.toString()).addAnnotation(
-                getClassNameFromFqName(testAnnotationFqName)
+                testAnnotationFqName.toClassName()
             ).addCode(snippet.snippet)
                 .returns(unitReturnType).build()
         )
@@ -37,14 +38,16 @@ fun generateTestFile(
     val defaultTestAnnotationFqName = settings.defaultTestAnnotationFqName
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
     val classes = testUnits.map { testUnit ->
-        TypeSpec.Companion.classBuilder("${testUnit.testedObjectName} tests")
+        val className = "${testUnit.testedObjectName} tests"
+        TypeSpec.Companion.classBuilder(className)
+            .addSuperclassFromSettings(settings, packageFqName, className)
             .addFunctionsFromSnippets(testAnnotationFqName, testUnit)
             .addModifiers(KModifier.PUBLIC)
             .let {
                 if (baseClassFqName == null)
                     it
                 else it.superclass(
-                    getClassNameFromFqName(baseClassFqName)
+                    baseClassFqName.toClassName()
                 )
             }
             .build()
@@ -61,10 +64,26 @@ fun generateTestFile(
     return code.split("\n")
 }
 
-private fun getClassNameFromFqName(testAnnotationFqName: FqName) =
+private fun TypeSpec.Builder.addSuperclassFromSettings(
+    settings: DtestSettings,
+    packageFqName: FqName,
+    className: String
+): TypeSpec.Builder {
+    var fqLookupName = packageFqName.child(Name.identifier(className))
+    while (fqLookupName.pathSegments().size > 0) {
+        val possibleParent = settings.classParents[fqLookupName.asString()]
+        if (possibleParent != null)
+            return this.superclass(FqName(possibleParent).toClassName())
+        else
+            fqLookupName = fqLookupName.parent()
+    }
+    return this
+}
+
+private fun FqName.toClassName() =
     ClassName(
-        testAnnotationFqName.parent().asString(),
-        testAnnotationFqName.shortName().asString()
+        parent().asString(),
+        shortName().asString()
     )
 
 private fun addImportsAndTypes(
