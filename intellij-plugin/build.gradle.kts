@@ -7,9 +7,9 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.jvm") version "1.6.20"
     // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.4.0"
+    id("org.jetbrains.intellij") version "1.5.2"
     // Gradle Changelog Plugin
     id("org.jetbrains.changelog") version "1.3.1"
     // Gradle Qodana Plugin
@@ -17,9 +17,11 @@ plugins {
 
 }
 
-//dependencies {
-//    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
-//}
+/*
+dependencies {
+    implementation(project(":core"))
+}
+*/
 
 group = properties("pluginGroup")
 version = properties("pluginVersion")

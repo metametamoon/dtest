@@ -9,14 +9,7 @@
     <depends>com.intellij.gradle</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.metametamoon.dtest.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.metametamoon.dtest.services.MyProjectService"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="com.github.metametamoon.dtest.MarkerProvider"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.metametamoon.dtest.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>

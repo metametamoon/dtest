@@ -1,5 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+//    id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.6.20"
     `maven-publish`
@@ -12,6 +12,11 @@ repositories {
     mavenCentral()
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
 
 dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.14")
@@ -25,20 +30,19 @@ dependencies {
 }
 
 
-
-tasks.shadowJar {
-    archiveClassifier.set("")
-    from(sourceSets.main.get().allSource)
-}
-
-val relocateShadowJar by tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation>("relocateShadowJar") {
-    target = tasks.named("shadowJar").get() as com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar?
-    prefix = "shadow"
-}
-
-tasks.named("shadowJar") {
-    dependsOn(relocateShadowJar)
-}
+//tasks.shadowJar {
+//    archiveClassifier.set("")
+//    from(sourceSets.main.get().allSource)
+//}
+//
+//val relocateShadowJar by tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation>("relocateShadowJar") {
+//    target = tasks.named("shadowJar").get() as com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar?
+//    prefix = "shadow"
+//}
+//
+//tasks.named("shadowJar") {
+//    dependsOn(relocateShadowJar)
+//}
 
 tasks.withType<Zip>().configureEach {
     this.isZip64 = true
@@ -61,8 +65,8 @@ publishing {
             groupId = rootProject.group as String?
             artifactId = "core"
             version = rootProject.version as String?
-
-            project.shadow.component(this)
+            from(components["java"])
+//            project.shadow.component(this)
 
         }
     }

@@ -1,9 +1,6 @@
 .gradle/
 .idea/*
-dtest/core/testData/tmp
 !.idea/inspectionProfiles/
-build/
+core/testData/tmp
+**/build/
 buildPlugin/
-dtest_playground/src/generatedTests/**
-/dtest_playground/src/dtest/
-/playground/src/dtest/
