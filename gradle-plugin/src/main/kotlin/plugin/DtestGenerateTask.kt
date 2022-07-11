@@ -1,7 +1,7 @@
 package plugin
 
-import com.github.metametamoon.DtestFileGenerator
-import com.github.metametamoon.util.DtestSettings
+import com.github.metametamoon.dtest.DtestFileGenerator
+import com.github.metametamoon.dtest.util.DtestSettings
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileType

@@ -7,4 +7,4 @@ plugins {
 
 include("core")
 include("gradle-plugin")
-include("intellij-plugin")
+//include("intellij-plugin")
