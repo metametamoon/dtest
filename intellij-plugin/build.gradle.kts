@@ -17,11 +17,9 @@ plugins {
 
 }
 
-/*
 dependencies {
     implementation(project(":core"))
 }
-*/
 
 group = properties("pluginGroup")
 version = properties("pluginVersion")

@@ -1,0 +1,10 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.github.metametamoon.dtest</id>
+    <name>Core</name>
+    <vendor>com.github.metametamoon</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.gradle</depends>
+</idea-plugin>

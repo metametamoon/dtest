@@ -11,6 +11,7 @@ typealias FqFileName = String
 typealias FqPackageOrClassName = String
 typealias FqParentName = String
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class DtestSettings(
     val imports: Map<FqFileName, List<ImportEntry>> = emptyMap(),

@@ -4,16 +4,13 @@ import com.github.metametamoon.DtestFileGenerator
 import com.github.metametamoon.tree.comparator.Different
 import com.github.metametamoon.tree.comparator.TreeComparator
 import com.github.metametamoon.util.DtestSettings
+import com.intellij.ide.impl.NewProjectUtil
+import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
+import com.intellij.ide.util.newProjectWizard.StepSequence
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.DynamicTest
@@ -40,15 +37,11 @@ class FunctionalTests {
     }
 
     private val kotlinParserProject = run {
-        val configuration = CompilerConfiguration()
-        configuration.put(
-            CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
-        )
-        KotlinCoreEnvironment.createForProduction(
-            Disposer.newDisposable(),
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).project
+        NewProjectUtil.createFromWizard(object : AbstractProjectWizard("Wizard", null, "") {
+            override fun getSequence(): StepSequence {
+                return StepSequence()
+            }
+        })
     }
 
     private fun createKtFile(

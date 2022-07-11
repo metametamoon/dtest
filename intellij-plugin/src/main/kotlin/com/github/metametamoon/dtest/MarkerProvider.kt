@@ -15,7 +15,7 @@ class MarkerProvider : LineMarkerProvider {
                 element.textRange,
                 AllIcons.Actions.Rerun,
                 { "Tooltip" },
-                { a, b: Any -> },
+                { _, _: Any -> },
                 GutterIconRenderer.Alignment.CENTER,
                 { "LineMarker name" }
             )
