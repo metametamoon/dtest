@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "main.kt": [
-      "kotlin.test.assertEquals"
-    ]
-  }
-}

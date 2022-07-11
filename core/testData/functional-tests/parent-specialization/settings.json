@@ -1,6 +1,0 @@
-{
-  "classParents": {
-    "com.example": "Base",
-    "com.example.foo": "org.example.FooBase"
-  }
-}
