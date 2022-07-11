@@ -8,9 +8,6 @@ import com.github.metametamoon.dtest.extraction.snippets.MarkdownSnippetExtracto
 import com.github.metametamoon.dtest.extraction.snippets.asText
 import com.github.metametamoon.dtest.generation.generateTestFile
 import com.github.metametamoon.dtest.util.DtestSettings
-import com.intellij.ide.impl.NewProjectUtil
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
-import com.intellij.ide.util.newProjectWizard.StepSequence
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
@@ -52,22 +49,7 @@ class DtestFileGenerator(
     }
 
 
-    private val globalKotlinParserOnlyProject = run {
-//        val configuration = CompilerConfiguration()
-//        configuration.put(
-//            CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE
-//        )
-//        KotlinCoreEnvironment.createForProduction(
-//            Disposer.newDisposable(),
-//            configuration,
-//            EnvironmentConfigFiles.JVM_CONFIG_FILES
-//        ).project
-        NewProjectUtil.createFromWizard(object : AbstractProjectWizard("Wizard", null, "") {
-            override fun getSequence(): StepSequence {
-                return StepSequence()
-            }
-        })
-    }
+    private val globalKotlinParserOnlyProject: Nothing = TODO()
 
     private fun createKtFile(
         file: File, project: Project = globalKotlinParserOnlyProject

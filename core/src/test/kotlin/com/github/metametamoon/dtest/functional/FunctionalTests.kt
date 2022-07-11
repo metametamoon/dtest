@@ -4,15 +4,15 @@ import com.github.metametamoon.dtest.DtestFileGenerator
 import com.github.metametamoon.dtest.tree.comparator.Different
 import com.github.metametamoon.dtest.tree.comparator.TreeComparator
 import com.github.metametamoon.dtest.util.DtestSettings
-import com.intellij.ide.impl.NewProjectUtil
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
-import com.intellij.ide.util.newProjectWizard.StepSequence
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
@@ -21,7 +21,15 @@ import java.nio.file.Path
 import kotlin.io.path.relativeTo
 import kotlin.random.Random
 
-class FunctionalTests {
+class FunctionalTests : BasePlatformTestCase() {
+    lateinit var kotlinParserProject: Project
+
+    @BeforeEach
+    fun setUpTests() {
+        super.setUp()
+        kotlinParserProject = myFixture.project
+    }
+
     @TestFactory
     fun createTestsFromFolder(): List<DynamicTest> {
         return File("functional-tests").listFiles().orEmpty().filterNotNull().map { file ->
@@ -36,13 +44,6 @@ class FunctionalTests {
         }
     }
 
-    private val kotlinParserProject = run {
-        NewProjectUtil.createFromWizard(object : AbstractProjectWizard("Wizard", null, "") {
-            override fun getSequence(): StepSequence {
-                return StepSequence()
-            }
-        })
-    }
 
     private fun createKtFile(
         file: File

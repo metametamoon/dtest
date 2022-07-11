@@ -1,36 +1,38 @@
 package com.github.metametamoon.dtest.tree.comparator
 
-import com.intellij.ide.impl.OpenProjectTask
-import com.intellij.loadHeadlessAppInUnitTestMode
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class TreeComparatorTests {
-    private val kotlinParserProject = run {
-        loadHeadlessAppInUnitTestMode()
-        ProjectManagerEx.getInstanceEx().newProject(
-            File("").toPath(), OpenProjectTask(
-                isNewProject = true,
-            )
-        )!!
+class TreeComparatorTests : BasePlatformTestCase() {
+    lateinit var kotlinParserProject: Project
+
+    @BeforeEach
+    fun setUpTests() {
+        super.setUp()
+        kotlinParserProject = myFixture.project
     }
 
     private fun createKtFile(
         file: File
     ): Pair<KtFile, Document> {
+        val result: Pair<KtFile, Document>
         val codeString = file.readLines().joinToString("\n")
         val fileName = file.name
         val lightVirtualFile = LightVirtualFile(fileName, KotlinFileType.INSTANCE, codeString)
-        val document = FileDocumentManager.getInstance().getDocument(lightVirtualFile)!!
-        return (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
+        val document: Document = FileDocumentManager.getInstance().getDocument(lightVirtualFile)!!
+        result = (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
+
+        return result
     }
 
     private fun compareFilesInFolder(folder: File): TreeComparisonResult {
@@ -97,24 +99,28 @@ class TreeComparatorTests {
     }
 
     private fun checkComparedDifferent(subfolderName: String) {
-        val folder = treeComparisonDirectory.resolve(subfolderName)
-        val expectedFile = folder.resolve("expected.kt")
-        val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
+        ApplicationManager.getApplication().runReadAction {
+            val folder = treeComparisonDirectory.resolve(subfolderName)
+            val expectedFile = folder.resolve("expected.kt")
+            val (expectedKtFile, expectedDocument) = createKtFile(expectedFile)
 
-        val actualFile = folder.resolve("actual.kt")
-        val (actualKtFile, actualDocument) = createKtFile(actualFile)
+            val actualFile = folder.resolve("actual.kt")
+            val (actualKtFile, actualDocument) = createKtFile(actualFile)
 
-        val comparisonResult = TreeComparator().compare(expectedKtFile, actualKtFile)
-        if (comparisonResult is Different) {
-            println(comparisonResult.toString(expectedFile, expectedDocument, actualFile, actualDocument))
+            val comparisonResult = TreeComparator().compare(expectedKtFile, actualKtFile)
+            if (comparisonResult is Different) {
+                println(comparisonResult.toString(expectedFile, expectedDocument, actualFile, actualDocument))
+            }
+            assertFalse(comparisonResult.areSame())
         }
-        assertFalse(comparisonResult.areSame())
     }
 
     private fun checkComparedSame(subfolderName: String) {
-        val comparisonResult = compareFilesInFolder(treeComparisonDirectory.resolve(subfolderName))
-        if (!comparisonResult.areSame()) {
-            throw AssertionError("Expected files to be same, but they are not:\n $comparisonResult")
+        ApplicationManager.getApplication().runReadAction {
+            val comparisonResult = compareFilesInFolder(treeComparisonDirectory.resolve(subfolderName))
+            if (!comparisonResult.areSame()) {
+                throw AssertionError("Expected files to be same, but they are not:\n $comparisonResult")
+            }
         }
     }
 }
