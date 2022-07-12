@@ -3,7 +3,6 @@ package com.github.metametamoon.dtest.tree.comparator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -14,13 +13,11 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class TreeComparatorTests : BasePlatformTestCase() {
-    lateinit var kotlinParserProject: Project
-
     @BeforeEach
     fun setUpTests() {
         super.setUp()
-        kotlinParserProject = myFixture.project
     }
+
 
     private fun createKtFile(
         file: File
@@ -30,7 +27,7 @@ class TreeComparatorTests : BasePlatformTestCase() {
         val fileName = file.name
         val lightVirtualFile = LightVirtualFile(fileName, KotlinFileType.INSTANCE, codeString)
         val document: Document = FileDocumentManager.getInstance().getDocument(lightVirtualFile)!!
-        result = (PsiManager.getInstance(kotlinParserProject).findFile(lightVirtualFile) as KtFile) to document
+        result = (PsiManager.getInstance(myFixture.project).findFile(lightVirtualFile) as KtFile) to document
 
         return result
     }

@@ -27,7 +27,8 @@ data class TestUnit(
  *  Is a facade for working with source files and generated files.
  */
 class DtestFileGenerator(
-    private val settings: DtestSettings = DtestSettings()
+    private val settings: DtestSettings = DtestSettings(),
+    private val kotlinParserProject: Project = throw IllegalArgumentException("Please provide an argument")
 ) {
     fun generateTests(file: File, generatedFilesFolder: File) {
         val ktFile = createKtFile(file)
@@ -49,17 +50,13 @@ class DtestFileGenerator(
     }
 
 
-    private val globalKotlinParserOnlyProject: Nothing = TODO()
-
     private fun createKtFile(
-        file: File, project: Project = globalKotlinParserOnlyProject
+        file: File
     ): KtFile {
-//        val codeString = file.readLines().joinToString("\n")
-//        val fileName = file.name
         val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file) ?: throw IllegalArgumentException(
             "File ${file.absolutePath} not found"
         )
-        return PsiManager.getInstance(project).findFile(
+        return PsiManager.getInstance(kotlinParserProject).findFile(
             virtualFile
         ) as KtFile
     }
