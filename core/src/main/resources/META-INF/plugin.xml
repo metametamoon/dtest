@@ -10,6 +10,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="com.github.metametamoon.dtest.MarkerProvider"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.github.metametamoon.dtest.DtestJbConfigurable"
+                id="com.github.metametamoon.dtest.DtestJbConfigurable"
+                displayName="Dtest Settings"/>
     </extensions>
 
 </idea-plugin>
