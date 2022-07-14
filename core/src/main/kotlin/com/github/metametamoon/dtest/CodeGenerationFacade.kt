@@ -5,7 +5,7 @@ import com.github.metametamoon.dtest.extraction.extractBaseTestClass
 import com.github.metametamoon.dtest.extraction.extractDocs
 import com.github.metametamoon.dtest.extraction.snippets.CodeSnippet
 import com.github.metametamoon.dtest.extraction.snippets.MarkdownSnippetExtractor
-import com.github.metametamoon.dtest.extraction.snippets.asText
+import com.github.metametamoon.dtest.extraction.snippets.textWithoutAsterisks
 import com.github.metametamoon.dtest.generation.generateTestFile
 import com.github.metametamoon.dtest.util.DtestSettings
 import com.intellij.openapi.project.Project
@@ -92,7 +92,7 @@ class DtestFileGenerator(
         extractedDocs.documentations.map { (element, documentation) ->
             val name = element.name ?: "unnamed"
             val snippets =
-                MarkdownSnippetExtractor().extractCodeSnippets(documentation.asText())
+                MarkdownSnippetExtractor().extractCodeSnippets(documentation.textWithoutAsterisks())
             TestUnit(name, snippets)
         }.skipTestUnitsWithoutSnippets()
 

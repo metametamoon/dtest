@@ -22,5 +22,16 @@ class MarkdownSnippetExtractor {
             CodeSnippet(code)
         }.toList()
     }
+
+    fun getLinesWithTestStarts(docText: List<String>): List<Int> {
+        val trimmedDoc = docText.joinToString("\n")
+        val dtestDelimiter = "<!--dtests-->"
+        val partWithTests = trimmedDoc.substringAfter(dtestDelimiter, "")
+        val newLinesBeforeTrimmed = trimmedDoc.substringBefore(dtestDelimiter, "").count { it == '\n' }
+        return kdocTestPattern.findAll(partWithTests).map { match ->
+            val newLines = partWithTests.substring(0 until match.range.first).count { it == '\n' }
+            newLines + newLinesBeforeTrimmed
+        }.toList()
+    }
 }
 

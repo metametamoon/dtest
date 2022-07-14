@@ -8,7 +8,7 @@ package com.example
  * ```
  * It starts with b:
  * ```
- * assertTrue(bar().startsWith("b))
+ * assertTrue(bar().startsWith("b"))
  * ```
  */
 fun bar(): String {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 /**
  * Traverses the children of this element without ignoring leaf elements
  */
-private val PsiElement.childrenNoWhitespaces: List<PsiElement>
+val PsiElement.childrenNoWhitespaces: List<PsiElement>
     get() {
         var currentChild: PsiElement? = firstChild
         val allChildren = mutableListOf<PsiElement>()
@@ -24,21 +24,25 @@ private val PsiElement.childrenNoWhitespaces: List<PsiElement>
         return allChildren.filter { it !is PsiWhiteSpace }
     }
 
-
-fun KDoc.asText(): List<String> {
+fun KDoc.textWithoutAsterisks(): List<String> {
     val section = children.firstIsInstanceOrNull<KDocSection>() ?: return emptyList()
-    val text = section.childrenNoWhitespaces.filter {
-        it.elementType == KDocTokens.TEXT || it.elementType == KDocTokens.CODE_BLOCK_TEXT
-        // I don't know the exact case where it is CODE_BLOCK_TEXT, but sometimes it is
-    }.map { it.text }
-    // we want to assert that the first line of this function's return list corresponds to the line
-    // where KDoc starts. So we need to pad it with an empty String if there was no
-    // element corresponding to the line
-    val firstLine =
-        if (section.childrenNoWhitespaces.firstOrNull().elementType == KDocTokens.LEADING_ASTERISK)
-            listOf("")
-        else emptyList()
-    return firstLine + text
+    val sectionChildren = section.childrenNoWhitespaces
+    val leadingAsteriskElements = listOf(-1) + sectionChildren.mapIndexedNotNull { index, element ->
+        if (element.elementType == KDocTokens.LEADING_ASTERISK)
+            index
+        else
+            null
+    } + listOf(sectionChildren.size)
+    val text = mutableListOf<String>()
+    for ((prev, cur) in leadingAsteriskElements.windowed(2)) {
+        when (cur - prev) {
+            1 -> text.add("")
+            0 -> throw IllegalArgumentException("Unexpected difference between neighboring leading asterisks: ${cur - prev}")
+            else -> (prev + 1 until cur).joinToString(separator = "") { sectionChildren[it].text }
+                .let { line -> text.add(line) }
+        }
+    }
+    return text
 }
 
 

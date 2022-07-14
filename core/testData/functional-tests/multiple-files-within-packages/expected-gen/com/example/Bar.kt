@@ -12,6 +12,6 @@ public class `bar tests`() {
 
     @Test
     fun `1`() {
-        assertTrue(bar().startsWith("b))
+        assertTrue(bar().startsWith("b"))
     }
 }
