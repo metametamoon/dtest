@@ -61,7 +61,20 @@ class DtestFileGenerator(
         ) as KtFile
     }
 
+    /**
+     * <!--dtest-->
+     * ```4 == 5```
+     *
+     *  println(2 + 3 == 5) ```
+     * 3 == 2
+     * ```
+     * @author Me
+     * @return Out
 
+     *
+     *
+     *
+     */
     private fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: String) {
         val newFile = File(folderForGeneratedFile, name)
         val parentFile = newFile.parentFile
