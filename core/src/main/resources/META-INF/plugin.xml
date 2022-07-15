@@ -8,8 +8,8 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>org.jetbrains.kotlin</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="com.github.metametamoon.dtest.MarkerProvider"/>
+        <runLineMarkerContributor language="kotlin"
+                                  implementationClass="com.github.metametamoon.dtest.DtestLineContributor"/>
         <applicationConfigurable
                 parentId="tools"
                 instance="com.github.metametamoon.dtest.DtestJbConfigurable"

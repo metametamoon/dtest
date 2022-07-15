@@ -32,9 +32,9 @@ class DtestJbConfigurable() : Configurable {
     override fun createComponent(): JComponent = settingsFrame
 
     override fun isModified(): Boolean {
-        return pathToSettingsPanel.text == DtestJbSettings.getInstance().pathToSettings &&
+        return !(pathToSettingsPanel.text == DtestJbSettings.getInstance().pathToSettings &&
                 pathToSourceFolderPanel.text == DtestJbSettings.getInstance().pathToSourceFolder &&
-                pathToGenerationFolderPanel.text == DtestJbSettings.getInstance().pathToGenerationFolder
+                pathToGenerationFolderPanel.text == DtestJbSettings.getInstance().pathToGenerationFolder)
     }
 
     override fun apply() {

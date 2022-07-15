@@ -28,6 +28,10 @@ private fun protectedFromShadowingKotlinUnitType(): ClassName {
     return ClassName("kot" + "${l}in", "Unit")
 }
 
+object GenerationUtils {
+    fun getClassNameForNamedObject(name: String): String = "$name tests"
+}
+
 fun generateTestFile(
     testUnits: List<TestUnit>,
     packageFqName: FqName,
@@ -38,7 +42,7 @@ fun generateTestFile(
     val defaultTestAnnotationFqName = settings.defaultTestAnnotationFqName
     val testAnnotationFqName = FqName(defaultTestAnnotationFqName)
     val classes = testUnits.map { testUnit ->
-        val className = "${testUnit.testedObjectName} tests"
+        val className = GenerationUtils.getClassNameForNamedObject(testUnit.testedObjectName)
         TypeSpec.Companion.classBuilder(className)
             .addSuperclassFromSettings(settings, packageFqName, className)
             .addFunctionsFromSnippets(testAnnotationFqName, testUnit)

@@ -23,6 +23,16 @@ data class TestUnit(
     val testedObjectName: String, val testSnippets: List<CodeSnippet>
 )
 
+object FileUtils {
+    /**
+     * Returns a **folder** specified by [fqName]
+     */
+    fun resolveByFqName(rootFolder: File, fqName: FqName): File {
+        val segments = fqName.pathSegments()
+        return segments.fold(rootFolder) { file, nextSegment -> file.resolve(nextSegment.asString()) }
+    }
+}
+
 /**
  *  Is a facade for working with source files and generated files.
  */
@@ -44,7 +54,7 @@ class DtestFileGenerator(
         if (testUnits.isNotEmpty()) {
             val fileGenerated =
                 generateTestFile(testUnits, packageFqName, settings, extractedBaseTestClass, ktFile.name)
-            val folderForGeneratedFile: File = findCorrespondingFolder(generatedFilesFolder, packageFqName)
+            val folderForGeneratedFile: File = FileUtils.resolveByFqName(generatedFilesFolder, packageFqName)
             placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
         }
     }
@@ -61,20 +71,6 @@ class DtestFileGenerator(
         ) as KtFile
     }
 
-    /**
-     * <!--dtest-->
-     * ```4 == 5```
-     *
-     *  println(2 + 3 == 5) ```
-     * 3 == 2
-     * ```
-     * @author Me
-     * @return Out
-
-     *
-     *
-     *
-     */
     private fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: String) {
         val newFile = File(folderForGeneratedFile, name)
         val parentFile = newFile.parentFile
@@ -83,10 +79,6 @@ class DtestFileGenerator(
         newFile.writeText(fileGenerated.joinToString(System.lineSeparator()))
     }
 
-    private fun findCorrespondingFolder(root: File, packageFqName: FqName): File {
-        val segments = packageFqName.pathSegments()
-        return segments.fold(root) { file, nextSegment -> file.resolve(nextSegment.asString()) }
-    }
 
     private fun extractTestUnits(extractedDocs: ExtractedDocs) =
         extractedDocs.documentations.map { (element, documentation) ->
