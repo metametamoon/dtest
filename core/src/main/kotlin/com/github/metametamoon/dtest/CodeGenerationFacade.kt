@@ -18,6 +18,10 @@ import java.io.File
 
 /**
  * Tests from a single test unit belong to the same class.
+ * ```
+ *    val a = 5
+ *    val b = a + 5
+ * ```
  */
 data class TestUnit(
     val testedObjectName: String, val testSnippets: List<CodeSnippet>
@@ -29,6 +33,18 @@ object FileUtils {
      */
     fun resolveByFqName(rootFolder: File, fqName: FqName): File {
         val segments = fqName.pathSegments()
+        //language=kotlin
+        """
+            package com.github.metametamoon.dtest
+
+            fun main() {
+                val a = 6
+                val b = a
+                a = TestUnit()
+                a += 2
+            }
+
+        """.trimIndent()
         return segments.fold(rootFolder) { file, nextSegment -> file.resolve(nextSegment.asString()) }
     }
 }

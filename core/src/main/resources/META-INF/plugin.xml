@@ -15,6 +15,7 @@
                 instance="com.github.metametamoon.dtest.DtestJbConfigurable"
                 id="com.github.metametamoon.dtest.DtestJbConfigurable"
                 displayName="Dtest Settings"/>
+        <multiHostInjector implementation="com.github.metametamoon.dtest.KotlinToKDocLanguageInjection"/>
     </extensions>
 
 </idea-plugin>
