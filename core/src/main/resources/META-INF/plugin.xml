@@ -15,6 +15,7 @@
                 instance="com.github.metametamoon.dtest.DtestJbConfigurable"
                 id="com.github.metametamoon.dtest.DtestJbConfigurable"
                 displayName="Dtest Settings"/>
+        <multipleRunLocationsProvider implementation="com.github.metametamoon.dtest.DtestMultipleRunLocationsProvider"/>
     </extensions>
 
 </idea-plugin>
