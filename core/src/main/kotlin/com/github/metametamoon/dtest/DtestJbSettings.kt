@@ -1,6 +1,8 @@
 package com.github.metametamoon.dtest
 
 import com.intellij.ide.util.PropertiesComponent
+import java.io.File
+import java.nio.file.Path
 import kotlin.reflect.KProperty
 
 object PropertyComponentDelegate {
@@ -21,6 +23,23 @@ class DtestJbSettings private constructor(
     var pathToSourceFolder: String by PropertyComponentDelegate
     var pathToGenerationFolder: String by PropertyComponentDelegate
     var pathToSettings: String by PropertyComponentDelegate
+
+    /**
+     * The path in settings can either be relative or absolute. We should check both variants
+     */
+    fun getFileWithGenerationFolder(projectRootPath: Path): File {
+        val generationFolder = File(pathToGenerationFolder)
+        val projectRoot = projectRootPath.toFile() ?: return generationFolder
+        val relativeFileIfThePathWasRelative = projectRoot.resolve(generationFolder)
+        return relativeFileIfThePathWasRelative
+    }
+
+    fun getSettingsFile(projectRootPath: Path): File {
+        val generationFolder = File(pathToSettings)
+        val projectRoot = projectRootPath.toFile() ?: return generationFolder
+        val relativeFileIfThePathWasRelative = projectRoot.resolve(generationFolder)
+        return relativeFileIfThePathWasRelative
+    }
 
     companion object {
         private val instance = DtestJbSettings()

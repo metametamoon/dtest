@@ -7,9 +7,8 @@ import com.github.metametamoon.dtest.generation.GenerationUtils
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.childrenOfType
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import java.io.File
 
 class NavigationUtil {
     companion object {
@@ -47,12 +45,10 @@ class NavigationUtil {
         }
 
         private fun findTestDeclaration(testNumber: Int, sourceDeclaration: KtDeclaration): Result<PsiElement, String> {
-            val correspondingFile =
-                sourceDeclaration.containingFile.virtualFile ?: return Err("The file was not in file system")
+            val projectRoot = DtestJbSettings.getInstance()
+                .getFileWithGenerationFolder(sourceDeclaration.project.stateStore.projectBasePath)
             val generatedFolder = FileUtils.resolveByFqName(
-                getFileWithGenerationFolder(
-                    ProjectFileIndex.getInstance(sourceDeclaration.project).getContentRootForFile(correspondingFile)
-                ),
+                projectRoot,
                 sourceDeclaration.containingKtFile.packageFqName
             )
             val generatedFile = generatedFolder.resolve(sourceDeclaration.containingKtFile.name)
@@ -73,16 +69,6 @@ class NavigationUtil {
                 val myMethodIdentifier = myMethod.nameIdentifier ?: return Err("Method identifier was null")
                 Ok(myMethodIdentifier)
             } else Err("Generated file ${generatedFile.canonicalPath} does not exist")
-        }
-
-        /**
-         * The path in settings can either be relative or absolute. We should check both variants
-         */
-        private fun getFileWithGenerationFolder(contentRootForFile: VirtualFile?): File {
-            val generationFolder = File(DtestJbSettings.getInstance().pathToGenerationFolder)
-            val projectRoot = contentRootForFile?.toNioPath()?.toFile() ?: return generationFolder
-            val relativeFileIfThePathWasRelative = projectRoot.resolve(generationFolder)
-            return relativeFileIfThePathWasRelative
         }
     }
 }

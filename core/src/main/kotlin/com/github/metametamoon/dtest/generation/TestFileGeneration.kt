@@ -2,6 +2,7 @@ package com.github.metametamoon.dtest.generation
 
 import com.github.metametamoon.dtest.TestUnit
 import com.github.metametamoon.dtest.util.DtestSettings
+import com.github.metametamoon.dtest.util.Imports
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -65,8 +66,31 @@ fun generateTestFile(
     )
 
     val code = file.build().toString()
-    return code.split("\n")
+    // the library uses \n as a divider, see [com.squareup.kotlinpoet.FileSpec.emit] as an example
+    val lines = code.split("\n")
+    val fileFqName = FqName.fromSegments(packageFqName.pathSegments().map { "$it" } + fileName)
+    val linesWithGoodImports = addStrictImportsIfNecessary(lines, settings.imports[fileFqName.asString()])
+    return linesWithGoodImports
 }
+
+fun addStrictImportsIfNecessary(lines: List<String>, imports: Imports?): List<String> {
+    return if (imports == null || !imports.strict) {
+        lines
+    } else {
+        val linesWithFilteredImports = lines.filter { !it.startsWith("import ") }
+        val importLines = createStrictImportLines(imports.importEntries)
+        if (linesWithFilteredImports.firstOrNull()?.startsWith("package") == true) {
+            val prefix = listOf(linesWithFilteredImports.first(), "")
+            val postFix = listOf("") + linesWithFilteredImports.subList(1, linesWithFilteredImports.size)
+            prefix + importLines + postFix
+        } else {
+            importLines + "" + lines
+        }
+    }
+}
+
+fun createStrictImportLines(importEntries: List<String>): List<String> =
+    importEntries.map { "import $it" }
 
 private fun TypeSpec.Builder.addSuperclassFromSettings(
     settings: DtestSettings,
@@ -100,8 +124,10 @@ private fun addImportsAndTypes(
     val fileFqName = FqName.fromSegments(
         packageFqName.pathSegments().map { "$it" } + fileName
     )
-    val imports = settings.imports[fileFqName.asString()].orEmpty().map(::FqName) + testAnnotationFqName
-    var file = FileSpec.builder(packageFqName.asString(), "A")
+    // if the imports are strict, we should not spend time here to add entries as they will be hard-replaced later anyway
+    val imports = settings.imports[fileFqName.asString()]?.importEntries.orEmpty().map(::FqName) + testAnnotationFqName
+    val unimportantName = "A"
+    var file = FileSpec.builder(packageFqName.asString(), unimportantName)
     for (import in imports)
         file = file.addImport(import.parent().asString(), import.shortName().asString())
     for (type in classes) {

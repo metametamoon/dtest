@@ -6,15 +6,20 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-typealias ImportEntry = String
+@Suppress("PROVIDED_RUNTIME_TOO_LOW") // workaround for a bug
+@Serializable
+data class Imports(
+    val strict: Boolean = false,
+    val importEntries: List<String>
+)
 typealias FqFileName = String
 typealias FqPackageOrClassName = String
 typealias FqParentName = String
 
-@Suppress("PROVIDED_RUNTIME_TOO_LOW")
+@Suppress("PROVIDED_RUNTIME_TOO_LOW") // workaround for a bug
 @Serializable
 data class DtestSettings(
-    val imports: Map<FqFileName, List<ImportEntry>> = emptyMap(),
+    val imports: Map<FqFileName, Imports> = emptyMap(),
     val defaultTestAnnotationFqName: String = "kotlin.test.Test",
     val classParents: Map<FqPackageOrClassName, FqParentName> = mapOf()
 ) {
