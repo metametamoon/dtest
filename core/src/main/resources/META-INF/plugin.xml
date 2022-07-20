@@ -9,13 +9,14 @@
     <depends>org.jetbrains.kotlin</depends>
     <extensions defaultExtensionNs="com.intellij">
         <runLineMarkerContributor language="kotlin"
-                                  implementationClass="com.github.metametamoon.dtest.DtestLineContributor"/>
+                                  implementationClass="com.github.metametamoon.dtest.DtestRunLineContributor"/>
         <applicationConfigurable
                 parentId="tools"
                 instance="com.github.metametamoon.dtest.DtestJbConfigurable"
                 id="com.github.metametamoon.dtest.DtestJbConfigurable"
                 displayName="Dtest Settings"/>
         <multipleRunLocationsProvider implementation="com.github.metametamoon.dtest.DtestMultipleRunLocationsProvider"/>
+        <codeInsight.lineMarkerProvider implementationClass="com.github.metametamoon.dtest.DtestNavigateToTestMarkerProvider" language="kotlin"/>
     </extensions>
 
 </idea-plugin>

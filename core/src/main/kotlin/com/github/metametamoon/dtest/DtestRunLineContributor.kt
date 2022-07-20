@@ -6,7 +6,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor
 
-class DtestLineContributor : RunLineMarkerContributor() {
+class DtestRunLineContributor : RunLineMarkerContributor() {
     private val kotlinTestMarkerContributor = KotlinTestRunLineMarkerContributor()
     override fun getInfo(element: PsiElement): Info? {
         return NavigationUtil.resolveDtest(element)?.mapBoth(
