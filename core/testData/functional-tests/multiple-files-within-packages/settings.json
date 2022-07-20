@@ -1,11 +1,15 @@
 {
   "imports": {
-    "main.kt": [
-      "kotlin.test.assertEquals"
-    ],
-    "com.example.Bar.kt": [
-      "kotlin.test.assertEquals",
-      "kotlin.test.assertTrue"
-    ]
+    "main.kt": {
+      "importEntries": [
+        "kotlin.test.assertEquals"
+      ]
+    },
+    "com.example.Bar.kt": {
+      "importEntries": [
+        "kotlin.test.assertEquals",
+        "kotlin.test.assertTrue"
+      ]
+    }
   }
 }
