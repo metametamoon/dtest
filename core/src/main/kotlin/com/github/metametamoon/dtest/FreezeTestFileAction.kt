@@ -73,17 +73,19 @@ class FreezeTestFileAction : AnAction() {
         val testRanges = MarkdownSnippetExtractor().getLineRanges(docText)
         warnOnDifferentSizes(testRanges, memberFunctions)
         val commonSize = min(testRanges.size, memberFunctions.size)
-        for (i in 0 until commonSize) {
-            val testRange = testRanges[i]
-            val memberFunction = memberFunctions[i]
-            insert(documentation, testRange, memberFunction)
-        }
-//        (0 until commonSize).map {}
+
+        // we should first translate line ranges into psi ranges to avoid
+        // line shifts during deleting/inserting lines below
+        (0 until commonSize).map { memberFunctions[it] to createPsiRange(documentation, testRanges[it]) }
+            .forEach { (memberFunction, testPsiRange) -> insert(documentation, testPsiRange, memberFunction) }
     }
 
-
-    private fun insert(documentation: KDoc, testRange: IntRange, memberFunction: KtNamedFunction) {
-        val (firstChild, lastChild) = createPsiRange(documentation, testRange)
+    private fun insert(
+        documentation: KDoc,
+        testPsiRange: Pair<PsiElement, PsiElement>,
+        memberFunction: KtNamedFunction
+    ) {
+        val (firstChild, lastChild) = testPsiRange
         val project = documentation.project
         val block = memberFunction.bodyBlockExpression ?: TODO("Support body expressions")
         val (firstChildToInsert: PsiElement, lastChildToInsert: PsiElement) = createInsertion(block, project)
