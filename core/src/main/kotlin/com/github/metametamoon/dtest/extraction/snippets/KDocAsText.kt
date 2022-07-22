@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * Traverses the children of this element without ignoring leaf elements
  */
 val PsiElement.childrenNoWhitespaces: List<PsiElement>
+    get() = allChildren.filter { it !is PsiWhiteSpace }
+
+val PsiElement.allChildren: List<PsiElement>
     get() {
         var currentChild: PsiElement? = firstChild
         val allChildren = mutableListOf<PsiElement>()
@@ -21,7 +24,7 @@ val PsiElement.childrenNoWhitespaces: List<PsiElement>
                 currentChild = currentChildNonNull.nextSibling
             } ?: break
         }
-        return allChildren.filter { it !is PsiWhiteSpace }
+        return allChildren
     }
 
 fun KDoc.textWithoutAsterisks(): List<String> {

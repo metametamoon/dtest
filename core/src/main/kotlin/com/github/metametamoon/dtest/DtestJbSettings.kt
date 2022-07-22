@@ -27,17 +27,17 @@ class DtestJbSettings private constructor(
     /**
      * The path in settings can either be relative or absolute. We should check both variants
      */
-    fun getFileWithGenerationFolder(projectRootPath: Path): File {
-        val generationFolder = File(pathToGenerationFolder)
-        val projectRoot = projectRootPath.toFile() ?: return generationFolder
-        val relativeFileIfThePathWasRelative = projectRoot.resolve(generationFolder)
-        return relativeFileIfThePathWasRelative
-    }
+    fun getFileWithGenerationFolder(projectRootPath: Path): File =
+        getFileOrRelative(projectRootPath, pathToGenerationFolder)
 
-    fun getSettingsFile(projectRootPath: Path): File {
-        val generationFolder = File(pathToSettings)
-        val projectRoot = projectRootPath.toFile() ?: return generationFolder
-        val relativeFileIfThePathWasRelative = projectRoot.resolve(generationFolder)
+    fun getSettingsFile(projectRootPath: Path): File = getFileOrRelative(projectRootPath, pathToSettings)
+
+    fun getSourceFolder(projectRootPath: Path): File = getFileOrRelative(projectRootPath, pathToSourceFolder)
+
+    private fun getFileOrRelative(rootPath: Path, path: String): File {
+        val file = File(path)
+        val projectRoot = rootPath.toFile() ?: return file
+        val relativeFileIfThePathWasRelative = projectRoot.resolve(file)
         return relativeFileIfThePathWasRelative
     }
 

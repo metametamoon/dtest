@@ -21,6 +21,11 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
+data class DtestDeclaration(
+    val testNumber: Int,
+    val sourceDeclaration: KtDeclaration
+)
+
 class NavigationUtil {
     companion object {
         /**
@@ -29,6 +34,17 @@ class NavigationUtil {
          * `KDOC_LEADING_STAR` on a line with the start of the dtest.
          */
         fun resolveDtest(element: PsiElement): Result<PsiElement, String>? {
+            val dtestDeclaration = lazyResolveDtest(element)
+            return if (dtestDeclaration != null)
+                findTestDeclaration(dtestDeclaration.testNumber, dtestDeclaration.sourceDeclaration)
+            else
+                null
+        }
+
+        /**
+         * @return `null` if element is not KDOC_LEADING_STAR on the line with some kdoc
+         */
+        fun lazyResolveDtest(element: PsiElement): DtestDeclaration? {
             val kdocSection = element.parent
             return if (kdocSection is KDocSection && element.elementType == KDocTokens.LEADING_ASTERISK) {
                 val kdoc = kdocSection.parent as? KDoc ?: return null
@@ -38,17 +54,17 @@ class NavigationUtil {
                         .indexOf(element) + 1 // 1 - the first KDoc line with a KDOC_START, not asterisk
                 val testNumber = linesWithSnippets.indexOf(lineOfThis)
                 if (testNumber != -1) {
-                    val testFunctionDeclaration = findTestDeclaration(testNumber, kdoc.owner ?: return null)
-                    testFunctionDeclaration
+                    DtestDeclaration(testNumber, kdoc.owner ?: return null)
                 } else null
             } else null
+
         }
 
         private fun findTestDeclaration(testNumber: Int, sourceDeclaration: KtDeclaration): Result<PsiElement, String> {
-            val projectRoot = DtestJbSettings.getInstance()
+            val generatedFolderRoot = DtestJbSettings.getInstance()
                 .getFileWithGenerationFolder(sourceDeclaration.project.stateStore.projectBasePath)
             val generatedFolder = FileUtils.resolveByFqName(
-                projectRoot,
+                generatedFolderRoot,
                 sourceDeclaration.containingKtFile.packageFqName
             )
             val generatedFile = generatedFolder.resolve(sourceDeclaration.containingKtFile.name)

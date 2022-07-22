@@ -17,11 +17,13 @@
                 displayName="Dtest Settings"/>
         <multipleRunLocationsProvider implementation="com.github.metametamoon.dtest.DtestMultipleRunLocationsProvider"/>
         <codeInsight.lineMarkerProvider implementationClass="com.github.metametamoon.dtest.DtestNavigateToTestMarkerProvider" language="kotlin"/>
+        <psi.referenceContributor implementation="com.github.metametamoon.dtest.DtestReferenceContributor" language="kotlin"/>
+<!--        <psi.referenceProvider providerClass="com.github.metametamoon.dtest.DtestReferenceProvider" language="kotlin"/>-->
     </extensions>
 
     <actions>
-        <action id="com.github.metametamoon.dtest.LoadToSettingsFileAction"
-                class="com.github.metametamoon.dtest.LoadToSettingsFileAction" text="Load To Dtest Settings">
+        <action id="com.github.metametamoon.dtest.FreezeTestFileAction"
+                class="com.github.metametamoon.dtest.FreezeTestFileAction" text="Load To Dtest Settings">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>

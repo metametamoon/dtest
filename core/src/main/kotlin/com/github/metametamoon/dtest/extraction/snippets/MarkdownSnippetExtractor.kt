@@ -23,15 +23,19 @@ class MarkdownSnippetExtractor {
         }.toList()
     }
 
-    fun getLinesWithTestStarts(docText: List<String>): List<Int> {
+    fun getLinesWithTestStarts(docText: List<String>): List<Int> = getLineRanges(docText).map { it.first }
+
+    fun getLineRanges(docText: List<String>): List<IntRange> {
         val trimmedDoc = docText.joinToString("\n")
         val dtestDelimiter = "<!--dtests-->"
         val partWithTests = trimmedDoc.substringAfter(dtestDelimiter, "")
         val newLinesBeforeTrimmed = trimmedDoc.substringBefore(dtestDelimiter, "").count { it == '\n' }
         return kdocTestPattern.findAll(partWithTests).map { match ->
-            val newLines = partWithTests.substring(0 until match.range.first).count { it == '\n' }
-            newLines + newLinesBeforeTrimmed
+            val newLinesOfStartAfterTrimmed = partWithTests.substring(0 until match.range.first).count { it == '\n' }
+            val newLinesOfEndAfterTrimmed = partWithTests.substring(0 until match.range.last).count { it == '\n' }
+            (newLinesOfStartAfterTrimmed + newLinesBeforeTrimmed)..(newLinesOfEndAfterTrimmed + newLinesBeforeTrimmed)
         }.toList()
     }
+
 }
 
