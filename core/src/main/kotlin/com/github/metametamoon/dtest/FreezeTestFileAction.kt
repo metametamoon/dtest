@@ -118,19 +118,15 @@ class FreezeTestFileAction : AnAction() {
 
     }
 
-    /**
-     * stuff
-     * stuff
-     */
     private fun createInsertion(
         block: KtBlockExpression,
         project: Project
     ): Pair<PsiElement, PsiElement> {
-        val documentationWithText = block.text.trim()
+        val documentationWithText = block.text
             .drop(1) // drop the braces
             .dropLast(1)
-            .trim()
             .trimIndent()
+            .trim()
             .split('\n')
             .map { " * $it" }
             .let { listOf("/**") + it + listOf(" *") + listOf(" */") + listOf("fun main() {}") }
