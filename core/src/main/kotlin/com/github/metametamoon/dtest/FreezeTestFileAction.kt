@@ -204,7 +204,7 @@ class FreezeTestFileAction : AnAction() {
 
     private fun freezeImports(generatedFile: KtFile, settingsFile: File) {
         val newImportEntries = generatedFile.importDirectives.map { importDirective ->
-            importDirective.importedFqName?.asString().orEmpty()
+            importDirective.text.substring("import .".lastIndex)
         }
         val newSettings = updateSettings(settingsFile, generatedFile, newImportEntries)
         settingsFile.writeText(Json.encodeToString(newSettings))
@@ -217,7 +217,11 @@ class FreezeTestFileAction : AnAction() {
     ): DtestSettings {
         val settings = DtestSettings.readFromFile(settingsFile) ?: DtestSettings()
         val newImports = settings.imports.toMutableMap()
-        newImports[file.packageFqName.asString() + ".${file.name}"] = Imports(true, newImportEntries)
+        val packageFqName = file.packageFqName.asString().let {
+            if (it.isNotEmpty()) "$it."
+            else it
+        }
+        newImports[packageFqName + file.name] = Imports(true, newImportEntries)
         val newSettings = settings.copy(imports = newImports)
         return newSettings
     }

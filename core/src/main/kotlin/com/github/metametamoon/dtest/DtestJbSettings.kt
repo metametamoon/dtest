@@ -27,7 +27,7 @@ class DtestJbSettings private constructor(
     /**
      * The path in settings can either be relative or absolute. We should check both variants
      */
-    fun getFileWithGenerationFolder(projectRootPath: Path): File =
+    fun getGenerationFolder(projectRootPath: Path): File =
         getFileOrRelative(projectRootPath, pathToGenerationFolder)
 
     fun getSettingsFile(projectRootPath: Path): File = getFileOrRelative(projectRootPath, pathToSettings)

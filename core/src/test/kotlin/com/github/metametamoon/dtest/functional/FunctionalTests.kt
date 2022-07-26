@@ -41,6 +41,13 @@ class FunctionalTests : BasePlatformTestCase() {
         }
     }
 
+    @Test
+    fun `single-test-with-strict-imports`() {
+        File("functional-tests").resolve("single-test-with-strict-imports").let { file ->
+            generateFunctionalTest(file).executable.execute()
+        }
+    }
+
 
     private fun createKtFile(
         file: File

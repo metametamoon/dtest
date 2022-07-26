@@ -1,5 +1,5 @@
 import java.util.Scanner
 
-fun main(){
+fun main() {
     return 42
 }

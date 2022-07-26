@@ -10,6 +10,7 @@ import com.github.metametamoon.dtest.generation.generateTestFile
 import com.github.metametamoon.dtest.util.DtestSettings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.name.FqName
@@ -31,6 +32,13 @@ object FileUtils {
         val segments = fqName.pathSegments()
         return segments.fold(rootFolder) { file, nextSegment -> file.resolve(nextSegment.asString()) }
     }
+
+    fun resolveByFqName(rootFolder: VirtualFile, fqName: FqName): VirtualFile {
+        val segments = fqName.pathSegments()
+        return segments.fold(rootFolder) { file, nextSegment ->
+            file.createChildDirectory(null, nextSegment.asString())
+        }
+    }
 }
 
 /**
@@ -45,20 +53,47 @@ class DtestFileGenerator(
         generateTests(ktFile, generatedFilesFolder)
     }
 
-    private fun generateTests(ktFile: KtFile, generatedFilesFolder: File) {
+    private fun generateTests(ktFile: KtFile, generationFolder: File) {
         setIdeaIoUseFallback()
-        val extractedDocs: ExtractedDocs = extractDocs(ktFile).value
-        val testUnits = extractTestUnits(extractedDocs)
         val packageFqName = ktFile.packageFqName
-        val extractedBaseTestClass = extractBaseTestClass(ktFile)
-        if (testUnits.isNotEmpty()) {
-            val fileGenerated =
-                generateTestFile(testUnits, packageFqName, settings, extractedBaseTestClass, ktFile.name)
-            val folderForGeneratedFile: File = FileUtils.resolveByFqName(generatedFilesFolder, packageFqName)
-            placeFile(fileGenerated, folderForGeneratedFile, ktFile.name)
+        val generatedFileContent = generateFileContent(ktFile, packageFqName)
+        if (generatedFileContent != null) {
+            val folderForGeneratedFile: File = FileUtils.resolveByFqName(generationFolder, packageFqName)
+            placeFile(generatedFileContent, folderForGeneratedFile, ktFile.name)
         }
     }
 
+    /**
+     * @return `null` if the file should not be generated
+     */
+    private fun generateFileContent(ktFile: KtFile, packageFqName: FqName): List<String>? {
+        val extractedDocs: ExtractedDocs = extractDocs(ktFile).value
+        val testUnits = extractTestUnits(extractedDocs)
+        val extractedBaseTestClass = extractBaseTestClass(ktFile)
+        return if (testUnits.isNotEmpty()) {
+            generateTestFile(testUnits, packageFqName, settings, extractedBaseTestClass, ktFile.name)
+        } else {
+            null
+        }
+    }
+
+
+    fun generateTests(ktFile: KtFile, generationFolder: VirtualFile) {
+        setIdeaIoUseFallback()
+        val packageFqName = ktFile.packageFqName
+        val generatedFileContent = generateFileContent(ktFile, packageFqName)
+        if (generatedFileContent != null) {
+            val folderForGeneratedFile: VirtualFile = FileUtils.resolveByFqName(generationFolder, packageFqName)
+            placeFile(generatedFileContent, folderForGeneratedFile, ktFile.name)
+        }
+    }
+
+    private fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: VirtualFile, name: String) {
+        val createdFile = folderForGeneratedFile.createChildData(null, name)
+        createdFile.setBinaryContent(
+            fileGenerated.joinToString(System.lineSeparator()).toByteArray(createdFile.charset)
+        )
+    }
 
     private fun createKtFile(
         file: File
@@ -71,6 +106,7 @@ class DtestFileGenerator(
         ) as KtFile
     }
 
+
     private fun placeFile(fileGenerated: List<String>, folderForGeneratedFile: File, name: String) {
         val newFile = File(folderForGeneratedFile, name)
         val parentFile = newFile.parentFile
@@ -79,7 +115,6 @@ class DtestFileGenerator(
         newFile.writeText(fileGenerated.joinToString(System.lineSeparator()))
     }
 
-
     private fun extractTestUnits(extractedDocs: ExtractedDocs) =
         extractedDocs.documentations.map { (element, documentation) ->
             val name = element.name ?: "unnamed"
@@ -87,6 +122,7 @@ class DtestFileGenerator(
                 MarkdownSnippetExtractor().extractCodeSnippets(documentation.textWithoutAsterisks())
             TestUnit(name, snippets)
         }.skipTestUnitsWithoutSnippets()
+
 
     private fun List<TestUnit>.skipTestUnitsWithoutSnippets() =
         filter { testUnit -> testUnit.testSnippets.isNotEmpty() }

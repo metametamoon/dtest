@@ -26,5 +26,9 @@
                 class="com.github.metametamoon.dtest.FreezeTestFileAction" text="Load To Dtest Settings">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
+        <action id="com.github.metametamoon.dtest.DtestGenerateAction"
+                class="com.github.metametamoon.dtest.DtestGenerateAction" text="Generate Dtests">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>

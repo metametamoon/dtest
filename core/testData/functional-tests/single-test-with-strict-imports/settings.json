@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "main.kt": {
+      "strict": true,
+      "importEntries": [
+        "kotlin.test.assertEquals",
+        "java.io.File"
+      ]
+    }
+  }
+}

@@ -62,7 +62,7 @@ class NavigationUtil {
 
         private fun findTestDeclaration(testNumber: Int, sourceDeclaration: KtDeclaration): Result<PsiElement, String> {
             val generatedFolderRoot = DtestJbSettings.getInstance()
-                .getFileWithGenerationFolder(sourceDeclaration.project.stateStore.projectBasePath)
+                .getGenerationFolder(sourceDeclaration.project.stateStore.projectBasePath)
             val generatedFolder = FileUtils.resolveByFqName(
                 generatedFolderRoot,
                 sourceDeclaration.containingKtFile.packageFqName

@@ -68,7 +68,12 @@ fun generateTestFile(
     val code = file.build().toString()
     // the library uses \n as a divider, see [com.squareup.kotlinpoet.FileSpec.emit] as an example
     val lines = code.split("\n")
-    val fileFqName = FqName.fromSegments(packageFqName.pathSegments().map { "$it" } + fileName)
+    val pathSegments = packageFqName.pathSegments()
+    val fileFqName =
+        if (pathSegments.size > 0)
+            FqName.fromSegments(pathSegments.map { "$it" } + fileName)
+        else
+            FqName(fileName)
     val linesWithGoodImports = addStrictImportsIfNecessary(lines, settings.imports[fileFqName.asString()])
     return linesWithGoodImports
 }
@@ -84,7 +89,7 @@ fun addStrictImportsIfNecessary(lines: List<String>, imports: Imports?): List<St
             val postFix = listOf("") + linesWithFilteredImports.subList(1, linesWithFilteredImports.size)
             prefix + importLines + postFix
         } else {
-            importLines + "" + lines
+            importLines + "" + linesWithFilteredImports
         }
     }
 }

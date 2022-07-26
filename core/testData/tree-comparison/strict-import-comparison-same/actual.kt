@@ -1,5 +1,5 @@
 import java.util.Scanner
 
-fun main(){
+fun main(): Unit {
     return 42
 }
