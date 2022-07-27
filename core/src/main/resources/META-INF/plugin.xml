@@ -18,7 +18,7 @@
         <multipleRunLocationsProvider implementation="com.github.metametamoon.dtest.DtestMultipleRunLocationsProvider"/>
         <codeInsight.lineMarkerProvider implementationClass="com.github.metametamoon.dtest.DtestNavigateToTestMarkerProvider" language="kotlin"/>
         <psi.referenceContributor implementation="com.github.metametamoon.dtest.DtestReferenceContributor" language="kotlin"/>
-<!--        <psi.referenceProvider providerClass="com.github.metametamoon.dtest.DtestReferenceProvider" language="kotlin"/>-->
+        <postStartupActivity implementation="com.github.metametamoon.dtest.DtestJbSettingInitializationActivity"/>
     </extensions>
 
     <actions>
