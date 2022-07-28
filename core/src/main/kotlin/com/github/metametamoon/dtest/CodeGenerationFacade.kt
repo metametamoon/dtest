@@ -36,7 +36,8 @@ object FileUtils {
     fun resolveByFqName(rootFolder: VirtualFile, fqName: FqName): VirtualFile {
         val segments = fqName.pathSegments()
         return segments.fold(rootFolder) { file, nextSegment ->
-            file.createChildDirectory(null, nextSegment.asString())
+            val existing = file.findChild(nextSegment.asString())
+            existing ?: file.createChildDirectory(null, nextSegment.asString())
         }
     }
 }

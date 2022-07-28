@@ -80,7 +80,7 @@ class NavigationUtil {
                 val myMethod = myClass.childrenOfType<KtClassBody>()
                     .firstOrNull()
                     ?.childrenOfType<KtNamedFunction>()
-                    ?.firstOrNull { it.name == testNumber.toString() }
+                    ?.firstOrNull { it.name == GenerationUtils.getMethodNameForIndex(testNumber) }
                     ?: return Err("Method with name $testNumber was not found")
                 val myMethodIdentifier = myMethod.nameIdentifier ?: return Err("Method identifier was null")
                 Ok(myMethodIdentifier)

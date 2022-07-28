@@ -7,7 +7,7 @@ data class CodeSnippet(
 const val testCode = "testCode"
 
 
-private fun markdownCodePattern(captureGroupName: String) = "```\\s*(?<$captureGroupName>.*?)\\s*```"
+private fun markdownCodePattern(captureGroupName: String) = "```\\s*?\n?(?<$captureGroupName>.*?)\\s*```"
 class MarkdownSnippetExtractor {
     private val kdocTestPattern =
         markdownCodePattern(testCode).toRegex(RegexOption.DOT_MATCHES_ALL)

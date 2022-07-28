@@ -207,7 +207,7 @@ class FreezeTestFileAction : AnAction() {
             importDirective.text.substring("import .".lastIndex)
         }
         val newSettings = updateSettings(settingsFile, generatedFile, newImportEntries)
-        settingsFile.writeText(Json.encodeToString(newSettings))
+        settingsFile.writeText(Json { prettyPrint = true }.encodeToString(newSettings))
     }
 
     private fun updateSettings(

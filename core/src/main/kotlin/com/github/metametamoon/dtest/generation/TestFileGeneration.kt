@@ -15,7 +15,7 @@ private fun TypeSpec.Builder.addFunctionsFromSnippets(
     var builder = this
     for ((index, snippet) in testUnit.testSnippets.withIndex()) {
         builder = builder.addFunction(
-            FunSpec.builder(index.toString()).addAnnotation(
+            FunSpec.builder(GenerationUtils.getMethodNameForIndex(index)).addAnnotation(
                 testAnnotationFqName.toClassName()
             ).addCode(snippet.snippet)
                 .returns(unitReturnType).build()
@@ -31,6 +31,7 @@ private fun protectedFromShadowingKotlinUnitType(): ClassName {
 
 object GenerationUtils {
     fun getClassNameForNamedObject(name: String): String = "$name tests"
+    fun getMethodNameForIndex(index: Int): String = "$index"
 }
 
 fun generateTestFile(
